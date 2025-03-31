@@ -15,3 +15,27 @@
   font-weight: normal;
   font-style: normal;
 }
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  width: .2rem;
+  height: .2rem;
+  background-color: #333;
+}
+ ::-webkit-scrollbar-button{
+  background-color: #333;
+ }
+::-webkit-scrollbar-track {
+  background-color: #333;
+}
+::-webkit-scrollbar-track-piece {
+  background-color: #333;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #d9a667;
+}
