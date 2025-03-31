@@ -17,9 +17,6 @@ const LandingTitle = () => {
           you need it
         </span>
       </h1>
-      <span className="font-open-sans text-white/50 font-bold border rounded-3xl bg-app-purple  p-2 text-xs animate-pulse ">
-        El espacio que estabas esperando, muy muy pronto ...
-      </span>
     </article>
   );
 };
