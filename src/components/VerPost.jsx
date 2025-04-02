@@ -9,10 +9,7 @@ const VerPost = ({ isOpen, onClose, postId }) => {
   const toggleShowMore = () => {
     setShowMore(!showMore);
     const element = document.getElementById("descPost");
-    element.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    element.scrollTo(0,0);
   };
 
   const handleUpComments = () => {
@@ -86,7 +83,7 @@ const VerPost = ({ isOpen, onClose, postId }) => {
                 <p
                   id="descPost"
                   className={
-                    "px-1 text-sm text-pretty overflow-y-auto max-h-40" +
+                    "px-1 text-sm text-pretty overflow-y-auto max-h-14 md:max-h-40" +
                     " " +
                     (showMore ? "" : "line-clamp-3 truncate")
                   }
@@ -111,8 +108,8 @@ const VerPost = ({ isOpen, onClose, postId }) => {
               <div className="flex flex-col space-y-2 h-0 md:h-auto relative">
                 {post?.comments?.map((comment, index) => (
                   <div key={index} className="flex space-x-2">
-                    <div className="w-6 h-6 rounded-full bg-gray-200"></div>
-                    <div>
+                    <div className="w-6 h-6 rounded-full bg-[url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOuxrvcNMfGLh73uKP1QqYpKoCB0JLXiBMvA&s')] bg-cover bg-center"></div>
+                    <div className="flex flex-col w-full">
                       <span className="font-semibold mr-2 opacity-60 text-app-soft">
                         {comment.author}
                       </span>
