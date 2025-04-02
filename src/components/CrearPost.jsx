@@ -46,7 +46,7 @@ const CrearPost = ({ isOpen, onClose }) => {
             Crear publicación
           </h1>
           <button
-            className="bg-app-red/80 md:hover:scale-110 transition-all active:scale-100 text-white font-semibold px-4 py-2 rounded-full text-[16px] hover:bg-app-red"
+            className="bg-app-red/80 md:hover:scale-110 transition-all active:scale-100 text-white font-semibold px-4 py-2 rounded-full text-[16px] hover:bg-app-red border"
             type="submit"
           >
             Publicar

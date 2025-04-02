@@ -8,7 +8,7 @@ const Menu = () => {
   return (
     <>
       <CrearPost isOpen={createPostModal.isOpen} onClose={createPostModal.closeModal} />
-      <div className="flex justify-center items-center gap-4 fixed md:sticky bottom-7 md:-bottom-full md:top-[2dvh] border bg-app-bluePurple/50 rounded-full h-max p-1 scale-90 md:scale-100 md:w-1/3 md:left-1/2 md:-translate-x-1/2 z-[60] text-app-soft transition-all">
+      <div className="flex justify-center items-center gap-4 fixed md:sticky bottom-7 md:-bottom-full md:top-[2dvh] border bg-app-bluePurple/50 rounded-full h-max p-1 scale-90 md:scale-100 md:w-1/3 md:left-1/2 md:-translate-x-1/2 z-[60] text-app-soft transition-all backdrop-blur-sm">
         <ul className="flex justify-between items-center gap-0 md:gap-3">
           <li className="inline-block mx-2 hover:scale-105 transition-all">
             <a

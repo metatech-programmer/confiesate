@@ -37,7 +37,7 @@ const VerPost = ({ isOpen, onClose, postId }) => {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="max-w-5xl mx-auto h-[86dvh] max-h-[90dvh] overflow-y-auto rounded-lg py-5 md:py-0 md:rounded-l-lg">
+      <div className="max-w-5xl mx-auto h-[86dvh] max-h-[90dvh] overflow-y-auto rounded-lg py-5 md:py-0 md:rounded-l-lg ">
         <div className="flex flex-col md:flex-row bg-app-purple/10 rounded-lg md:h-full">
           {/* Left side - Image */}
           <div className="bg-app-purple/10 h-[27dvh] md:h-full md:w-[65%] ">
@@ -54,16 +54,22 @@ const VerPost = ({ isOpen, onClose, postId }) => {
           <div className="md:w-[35%] flex flex-col">
             {/* Header with user info */}
             <div className="p-4 border-b">
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 justify-between">
+                <div className="flex items-center space-x-2 ">
+
                 <div
                   className="w-8 h-8 rounded-full bg-gray-200 bg-cover bg-center"
                   style={{
                     backgroundImage: `url('https://avatar.iran.liara.run/public/${post?.id}')`,
                   }}
-                >
+                  >
                   {/* User avatar placeholder */}
                 </div>
-                <div className="font-semibold text-md">{post?.author}</div>
+                <div className="font-semibold text-md font-lacquer">{post?.author}</div>
+                  </div>
+                <button className="border border-gray-300 p-1 rounded-md  md:hover:font-bold  md:hover:bg-app-red bg-app-red/50 text-xs md:hover:scale-105 transition-all">
+                  Reportar ({post?.reports || 0})
+                  </button> 
               </div>
             </div>
 
@@ -73,7 +79,7 @@ const VerPost = ({ isOpen, onClose, postId }) => {
               <div className="mb-4 w-full">
                 <h2
                   className={
-                    "font-bold mb-2 text-app-blue text-balance truncate" +
+                    "font-bold mb-2 text-app-blue text-balance truncate  font-lacquer" +
                     " " +
                     (showMore ? "" : "line-clamp-2")
                   }
@@ -95,8 +101,8 @@ const VerPost = ({ isOpen, onClose, postId }) => {
                     "text-sm cursor-pointer " +
                     " " +
                     (showMore
-                      ? "text-app-blue hover:text-white/50"
-                      : "text-gray-200 hover:text-app-blue")
+                      ? "text-app-blue md:hover:text-white/50"
+                      : "text-gray-200 md:hover:text-app-blue")
                   }
                   onClick={() => toggleShowMore()}
                 >
@@ -110,7 +116,7 @@ const VerPost = ({ isOpen, onClose, postId }) => {
                   <div key={index} className="flex space-x-2">
                     <div className="w-6 h-6 rounded-full bg-[url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOuxrvcNMfGLh73uKP1QqYpKoCB0JLXiBMvA&s')] bg-cover bg-center"></div>
                     <div className="flex flex-col w-full">
-                      <span className="font-semibold mr-2 opacity-60 text-app-soft">
+                      <span className="font-semibold mr-2 opacity-60 text-app-soft font-lacquer">
                         {comment.author}
                       </span>
                       <span className="text-sm  text-gray-500 text-pretty">
@@ -120,20 +126,22 @@ const VerPost = ({ isOpen, onClose, postId }) => {
                   </div>
                 ))}
                    <div onClick={() => handleUpComments()}
-                className="sticky -bottom-4 w-max md:w-auto text-center opacity-90 bg-app-blue text-gray-200 px-12 py-0 rounded-t-full border backdrop-blur-2xl transition-all border-white left-0 right-0 mx-auto cursor-pointer md:hover:opacity-100 active:opacity-100 text-xs "
+                className="sticky -bottom-4 w-max md:w-auto text-center opacity-90 bg-app-blue text-gray-200 px-12 py-0 rounded-t-full border backdrop-blur-2xl transition-all border-white left-0 right-0 mx-auto cursor-pointer md:md:hover:opacity-100 active:opacity-100 text-xs "
                 style={{ backdropFilter: "blur(2px)" }}
               >
                 <span>Volver arriba</span>
               </div>
               </div>
-           
+            
             </div>
 
             {/* Footer with actions */}
             <div className="p-4 border-t flex  flex-col gap-3">
               <div>
-                <div className="flex items-center space-x-4 mb-2">
-                  <button className="hover:text-gray-600 flex gap-2">
+                <div className="flex items-center  justify-between space-x-4 mb-2">
+                  <div className="flex items-center space-x-4">
+
+                  <button className="md:hover:text-gray-600 flex gap-2">
                     <svg
                       width="24"
                       height="24"
@@ -145,7 +153,7 @@ const VerPost = ({ isOpen, onClose, postId }) => {
                     </svg>
                     {post?.likes}
                   </button>
-                  <button className="hover:text-gray-600 flex gap-2">
+                  <button className="md:hover:text-gray-600 flex gap-2">
                     <svg
                       width="24"
                       height="24"
@@ -157,6 +165,10 @@ const VerPost = ({ isOpen, onClose, postId }) => {
                     </svg>
                     {post?.comments?.length}
                   </button>
+
+                  </div>
+
+                 
                 </div>
               </div>
               <div>
@@ -168,7 +180,7 @@ const VerPost = ({ isOpen, onClose, postId }) => {
                   />
                   <button
                     type="submit"
-                    className="border border-gray-300 p-2 rounded-md hover:bg-black/30"
+                    className="border border-gray-300 p-2 rounded-md md:hover:bg-black/30 md:hover:scale-105 transition-all"
                   >
                     Publicar
                   </button>
