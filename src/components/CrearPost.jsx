@@ -8,10 +8,12 @@ const CrearPost = ({ isOpen, onClose }) => {
     link: "",
     board: "",
     tags: [],
+    allowComments: false,
   });
 
   const [imagePreview, setImagePreview] = useState(null);
   const [showMoreOptions, setShowMoreOptions] = useState(false);
+  const [allowComments, setAllowComments] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -38,6 +40,14 @@ const CrearPost = ({ isOpen, onClose }) => {
     }));
   };
 
+  const handleAllowComments = () => {
+    setAllowComments(!allowComments);
+    setFormData((prev) => ({
+      ...prev,
+      allowComments: !prev.allowComments,
+    }));
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div>
@@ -46,7 +56,7 @@ const CrearPost = ({ isOpen, onClose }) => {
             Crear publicación
           </h1>
           <button
-            className="bg-app-red/80 md:hover:scale-110 transition-all active:scale-100 text-white font-semibold px-4 py-2 rounded-full text-[16px] hover:bg-app-red border"
+            className="bg-app-red/80 md:hover:scale-110 active:scale-110 transition-all  text-white font-semibold px-4 py-2 rounded-full text-[16px] md:hover:bg-app-red active:bg-app-red border"
             type="submit"
           >
             Publicar
@@ -89,6 +99,7 @@ const CrearPost = ({ isOpen, onClose }) => {
                       onChange={handleImageUpload}
                       className="hidden"
                       id="image-upload"
+                      required
                     />
                     <label
                       htmlFor="image-upload"
@@ -137,11 +148,13 @@ const CrearPost = ({ isOpen, onClose }) => {
                     value={formData.title}
                     onChange={handleChange}
                     className="w-full px-0 py-2 text-[16px] placeholder-[#6D6D6D] focus:outline-none border-none  font-semibold"
+                    required
                   />
                 </div>
 
                 <div className="border p-2 rounded-xl  border-app-purple/30">
                   <textarea
+                    required
                     name="description"
                     placeholder="Agrega una descripción detallada"
                     value={formData.description}
@@ -188,18 +201,21 @@ const CrearPost = ({ isOpen, onClose }) => {
                             name="allowComments"
                             checked={formData.allowComments}
                             onChange={handleChange}
+                            id="allowComments"
+                            onClick={handleAllowComments}
                             className="opacity-0 w-0 h-0"
+                            required
                           />
                           <span
                             className={`absolute cursor-pointer top-0 left-0 right-0 bottom-0 rounded-full transition-colors duration-200 ease-in-out ${
-                              formData.allowComments
+                              allowComments
                                 ? "bg-[#0074E8]"
                                 : "bg-[#E9E9E9]"
                             }`}
                           >
                             <span
                               className={`absolute w-5 h-5 bg-white rounded-full transition-transform duration-200 ease-in-out ${
-                                formData.allowComments
+                                allowComments
                                   ? "translate-x-4"
                                   : "translate-x-0.5"
                               } transform top-0.5`}

@@ -9,7 +9,7 @@ const VerPost = ({ isOpen, onClose, postId }) => {
   const toggleShowMore = () => {
     setShowMore(!showMore);
     const element = document.getElementById("descPost");
-    element.scrollTo(0,0);
+    element.scrollTo(0, 0);
   };
 
   const handleUpComments = () => {
@@ -56,25 +56,29 @@ const VerPost = ({ isOpen, onClose, postId }) => {
             <div className="p-4 border-b">
               <div className="flex items-center space-x-2 justify-between">
                 <div className="flex items-center space-x-2 ">
-
-                <div
-                  className="w-8 h-8 rounded-full bg-gray-200 bg-cover bg-center"
-                  style={{
-                    backgroundImage: `url('https://avatar.iran.liara.run/public/${post?.id}')`,
-                  }}
+                  <div
+                    className="w-8 h-8 rounded-full bg-gray-200 bg-cover bg-center"
+                    style={{
+                      backgroundImage: `url('https://avatar.iran.liara.run/public/${post?.id}')`,
+                    }}
                   >
-                  {/* User avatar placeholder */}
-                </div>
-                <div className="font-semibold text-md font-lacquer">{post?.author}</div>
+                    {/* User avatar placeholder */}
                   </div>
-                <button className="border border-gray-300 p-1 rounded-md  md:hover:font-bold  md:hover:bg-app-red bg-app-red/50 text-xs md:hover:scale-105 transition-all">
+                  <div className="font-semibold text-md font-lacquer">
+                    {post?.author}
+                  </div>
+                </div>
+                <button className="border border-gray-300 p-1 rounded-md  md:hover:font-bold active:font-bold  md:hover:bg-app-red active:bg-app-red bg-app-red/50 text-xs md:hover:scale-105 active:scale-105 transition-all">
                   Reportar ({post?.reports || 0})
-                  </button> 
+                </button>
               </div>
             </div>
 
             {/* Comments section */}
-            <div className="relative flex flex-col items-baseline   overflow-y-auto p-4 "  id="comments">
+            <div
+              className="relative flex flex-col items-baseline   overflow-y-auto p-4 "
+              id="comments"
+            >
               {/* Main post content */}
               <div className="mb-4 w-full">
                 <h2
@@ -125,14 +129,14 @@ const VerPost = ({ isOpen, onClose, postId }) => {
                     </div>
                   </div>
                 ))}
-                   <div onClick={() => handleUpComments()}
-                className="sticky -bottom-4 w-max md:w-auto text-center opacity-90 bg-app-blue text-gray-200 px-12 py-0 rounded-t-full border backdrop-blur-2xl transition-all border-white left-0 right-0 mx-auto cursor-pointer md:md:hover:opacity-100 active:opacity-100 text-xs "
-                style={{ backdropFilter: "blur(2px)" }}
-              >
-                <span>Volver arriba</span>
+                <div
+                  onClick={() => handleUpComments()}
+                  className="sticky -bottom-4 w-max md:w-auto text-center opacity-90 bg-app-blue text-gray-200 px-12 py-0 rounded-t-full border backdrop-blur-2xl transition-all border-white left-0 right-0 mx-auto cursor-pointer md:md:hover:opacity-100 active:opacity-100 text-xs "
+                  style={{ backdropFilter: "blur(2px)" }}
+                >
+                  <span>Volver arriba</span>
+                </div>
               </div>
-              </div>
-            
             </div>
 
             {/* Footer with actions */}
@@ -140,35 +144,31 @@ const VerPost = ({ isOpen, onClose, postId }) => {
               <div>
                 <div className="flex items-center  justify-between space-x-4 mb-2">
                   <div className="flex items-center space-x-4">
-
-                  <button className="md:hover:text-gray-600 flex gap-2">
-                    <svg
-                      width="24"
-                      height="24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                    </svg>
-                    {post?.likes}
-                  </button>
-                  <button className="md:hover:text-gray-600 flex gap-2">
-                    <svg
-                      width="24"
-                      height="24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-                    </svg>
-                    {post?.comments?.length}
-                  </button>
-
+                    <button className="md:hover:text-gray-600 flex gap-2">
+                      <svg
+                        width="24"
+                        height="24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                      </svg>
+                      {post?.likes}
+                    </button>
+                    <button className="md:hover:text-gray-600 flex gap-2">
+                      <svg
+                        width="24"
+                        height="24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+                      </svg>
+                      {post?.comments?.length}
+                    </button>
                   </div>
-
-                 
                 </div>
               </div>
               <div>
@@ -177,10 +177,11 @@ const VerPost = ({ isOpen, onClose, postId }) => {
                     type="text"
                     className="w-full p-1 border border-gray-300 rounded-md  bg-app-bluePurple/40"
                     placeholder="Agregar un comentario..."
+                    required
                   />
                   <button
                     type="submit"
-                    className="border border-gray-300 p-2 rounded-md md:hover:bg-black/30 md:hover:scale-105 transition-all"
+                    className="border border-gray-300 bg-black/40 p-2 rounded-md md:hover:bg-black/80 active:bg-black/80 md:hover:scale-105  active:scale-105 transition-all font-bold"
                   >
                     Publicar
                   </button>
