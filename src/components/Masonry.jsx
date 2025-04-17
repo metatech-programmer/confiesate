@@ -33,7 +33,7 @@ const Masonry = ({ items }) => {
         {items.map((item) => (
           <div
             key={item.id}
-            className="break-inside-avoid mb-4 md:hover:scale-105 bg-app-bluePurple rounded-xl transition-all md:hover:shadow-lg md:hover:shadow-app-purple/70 mix-blend-plus-darker relative hover:cursor-pointer"
+            className="break-inside-avoid mb-4 md:hover:scale-105 bg-app-bluePurple rounded-xl transition-all md:hover:shadow-lg md:hover:shadow-app-purple/70 mix-blend-plus-darker relative hover:cursor-pointer animate-show"
             onDoubleClick={() => handleClick(item.id)}
           >
             <div className="relative">
@@ -63,7 +63,7 @@ const Masonry = ({ items }) => {
                   />
                   <span className="truncate  md:w-full text-xs">{item.author}</span>
                 </div>
-                <div className="flex items-center justify-end space-x-1 md:space-x-3 w-1/3 ">
+                <div className="flex items-center justify-end space-x-1 md:space-x-2 w-1/3 ">
                   <button className=" hover:scale-110 active:scale-110 transition-all" onClick={(e) => postModal.openModal(item.id)}>
                     {" "}
                     <svg
@@ -80,7 +80,7 @@ const Masonry = ({ items }) => {
                     onClick={(e) => handleClick(item.id)}
                     type="button"
                     className={
-                      "md:hover:scale-110 active:scale-110 size-6 mr-3 z-50  transition-all " +
+                      "md:hover:scale-110 active:scale-110  z-50  transition-all " +
                       (likedItems[item.id]
                         ? " fill-app-red stroke-app-red/70 "
                         : "fill-stone-800  stroke-slate-400 ")
@@ -89,7 +89,7 @@ const Masonry = ({ items }) => {
                   >
                     <svg
                       viewBox="0 0 1024.00 1024.00"
-                      class="icon"
+                      class="w-6 h-6"
                       version="1.1"
                       xmlns="http://www.w3.org/2000/svg"
                       stroke-width="8.192"

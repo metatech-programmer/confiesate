@@ -1,43 +1,55 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CrearPost from "./CrearPost";
 import useModal from "../hooks/useModal";
 
-const Menu = () => {
+const Menu = ({ titlePage }) => {
   const createPostModal = useModal();
+  const [title, setTitle] = useState(
+    "Todos los post de la comunidad en un solo lugar"
+  );
+
+  useEffect(() => {
+    titlePage(title);
+  }, [title, titlePage]);
 
   return (
     <>
-      <CrearPost isOpen={createPostModal.isOpen} onClose={createPostModal.closeModal} />
-      <div className="flex justify-center items-center gap-4 fixed md:sticky bottom-7 md:-bottom-full md:top-[2dvh] border bg-app-bluePurple/50 rounded-full h-max p-1 scale-90 md:scale-100 md:w-1/3 md:left-1/2 md:-translate-x-1/2 z-[60] text-app-soft transition-all backdrop-blur-sm">
-        <ul className="flex justify-between items-center gap-0 md:gap-3">
+      <CrearPost
+        isOpen={createPostModal.isOpen}
+        onClose={createPostModal.closeModal}
+      />
+      <div className="flex justify-center items-center gap-4 fixed md:sticky bottom-7 md:-bottom-full md:top-[2dvh] border bg-app-bluePurple/50 rounded-full h-fit p-1 w-max mx-3 md:mx-auto   z-[60] text-app-soft transition-all backdrop-blur-sm overflow-hidden ">
+        <ul className="flex justify-center items-center gap-0  md:gap-1 text-lg w-full">
           <li className="inline-block mx-2 hover:scale-105 transition-all">
-            <a
-              href="#"
-              className="text-lg font-lacquer hover:text-slate-200 transition-all lowercase hover:underline underline-offset-3 hover:decoration-wavy"
+            <button
+              onClick={() =>
+                setTitle("Todos los post de la comunidad en un solo lugar")
+              }
+              className="font-lacquer hover:text-slate-200 transition-all lowercase hover:underline underline-offset-3 hover:decoration-wavy"
             >
               Todos
-            </a>
+            </button>
           </li>
           <li className="inline-block mx-2 hover:scale-105 transition-all">
-            <a
-              href="#"
-              className="text-lg font-lacquer hover:text-slate-200 transition-all lowercase hover:underline underline-offset-3 hover:decoration-wavy"
+            <button
+              onClick={() => setTitle("Todos los post de confesiones")}
+              className="font-lacquer hover:text-slate-200 transition-all lowercase hover:underline underline-offset-3 hover:decoration-wavy"
             >
               Confesiones
-            </a>
+            </button>
           </li>
           <li className="inline-block mx-2 hover:scale-105 transition-all">
-            <a
-              href="#"
-              className="text-lg font-lacquer hover:text-slate-200 transition-all lowercase hover:underline underline-offset-3 hover:decoration-wavy"
+            <button
+              onClick={() => setTitle("Todos los post de los ciudadanos")}
+              className="font-lacquer hover:text-slate-200 transition-all lowercase hover:underline underline-offset-3 hover:decoration-wavy"
             >
               Ciudadanos
-            </a>
+            </button>
           </li>
-          <li className="inline-block ml-2 hover:scale-95  transition-all">
+          <li className="inline-block hover:scale-95  transition-all">
             <button
               onClick={createPostModal.openModal}
-              className="text-sm font-lacquer bg-app-red/80 hover:text-slate-200 transition-all lowercase  hover:uppercase  rounded-full p-1 flex w-20 items-center justify-evenly md:hover:scale-95 active:scale-95"
+              className="font-lacquer bg-app-red/80 hover:text-slate-200 transition-all lowercase  hover:uppercase  rounded-full  h-min flex w-20 items-center justify-evenly md:hover:scale-95 active:scale-95"
             >
               <svg
                 className="inline-block size-5"

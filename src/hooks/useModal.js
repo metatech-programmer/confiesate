@@ -7,11 +7,13 @@ const useModal = (initialState = false) => {
   const openModal = useCallback((data = null) => {
     setModalData(data);
     setIsOpen(true);
+    document.body.style.overflow = 'hidden';
   }, []);
 
   const closeModal = useCallback(() => {
     setIsOpen(false);
     setModalData(null);
+    document.body.style.overflow = 'auto';
   }, []);
 
   const toggleModal = useCallback((data = null) => {

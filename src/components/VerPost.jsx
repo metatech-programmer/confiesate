@@ -37,8 +37,8 @@ const VerPost = ({ isOpen, onClose, postId }) => {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="max-w-5xl mx-auto h-[86dvh] max-h-[90dvh] overflow-y-auto rounded-lg py-5 md:py-0 md:rounded-l-lg ">
-        <div className="flex flex-col md:flex-row bg-app-purple/10 rounded-lg md:h-full">
+      <div className="max-w-5xl mx-auto md:h-[86dvh] max-h-[90dvh] overflow-y-auto rounded-lg md:rounded-l-lg ">
+        <div className="flex flex-col md:flex-row bg-app-purple/10 rounded-lg  md:h-full">
           {/* Left side - Image */}
           <div className="bg-app-purple/10 h-[27dvh] md:h-full md:w-[65%] ">
             {post?.imageUrl && (
@@ -76,7 +76,7 @@ const VerPost = ({ isOpen, onClose, postId }) => {
 
             {/* Comments section */}
             <div
-              className="relative flex flex-col items-baseline   overflow-y-auto p-4 "
+              className="relative flex flex-col items-baseline h-[30dvh] md:h-auto  overflow-y-auto p-4 "
               id="comments"
             >
               {/* Main post content */}
