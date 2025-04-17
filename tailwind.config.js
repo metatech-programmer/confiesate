@@ -22,7 +22,7 @@ export default {
       animation: {
         "fade-in-up": "fadeInUp 1s ease-out",
         "fade-in": "fadeIn .5s ease-out",
-        "expand": "expand .5s ease-out",	
+        "expand": "expand .3s ease-out",	
       },
       keyframes: {
         fadeInUp: {

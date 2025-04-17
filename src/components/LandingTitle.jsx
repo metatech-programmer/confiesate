@@ -2,7 +2,7 @@ import silence from "../assets/images/silence.gif";
 
 const LandingTitle = () => {
   return (
-    <article className="bg-gradient-to-b from-app-soft  to-transparent text-white flex flex-col justify-center w-full h-dvh items-center gap-8 overflow-hidden">
+    <section className="bg-gradient-to-b from-app-soft  to-transparent text-white flex flex-col justify-center w-full h-dvh items-center gap-8 overflow-hidden">
       <div
         className=" size-64 md:size-72   bg-center bg-no-repeat  rounded-full animate-fade-in-up"
         style={{
@@ -17,7 +17,7 @@ const LandingTitle = () => {
           you need it
         </span>
       </h1>
-    </article>
+    </section>
   );
 };
 
