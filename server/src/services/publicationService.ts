@@ -2,42 +2,80 @@ import { PrismaClient, PublicationStatus, Prisma } from '@prisma/client';
 import { ApiError } from '../utils/errorHandler';
 import { encrypt, decrypt } from '../utils/encryption';
 
+// Interfaz que espera el frontend
+export interface Post {
+  id: number;
+  author?: string;
+  title?: string;
+  description?: string;
+  imageUrl?: string;
+  likes?: number;
+  createdAt?: string;
+  comments?: {
+    author?: string;
+    text?: string;
+  }[];
+  reports?: number;
+}
+
+// Interfaz para la base de datos
 interface Publication {
+  id: number;
   uuid: string;
+  title: string | null; // Changed from optional to nullable
   content: string;
+  image_url: string | null; // Changed from optional to nullable
   status: PublicationStatus;
-  user_uuid: string | null;
+  user_uuid: string;
   created_at: Date;
   user?: {
     uuid: string;
     name: string;
   };
-  comments?: Array<any>;
-  likes?: Array<any>;
+  Comment?: Array<any>;
+  Like?: Array<any>;
   reports?: Array<any>;
 }
 
 interface CreatePublicationDTO {
   content: string;
   userUuid?: string;
+  title?: string;
+  imageUrl?: string;
 }
 
 export class PublicationService {
   constructor(private prisma: PrismaClient) {}
 
-  /**
-   * Crear una nueva publicación
-   */
-  async create(data: CreatePublicationDTO): Promise<Publication> {
+  private transformToPost(publication: Publication): Post {
+    return {
+      id: publication.id,
+      author: publication.user?.name || 'Anónimo',
+      title: publication.title || undefined, 
+      description: decrypt(publication.content) || publication.content,
+      imageUrl: publication.image_url || undefined, 
+      likes: publication.Like?.length || 0,
+      createdAt: publication.created_at.toISOString(),
+      comments: publication.Comment?.map(comment => ({
+        author: comment.user?.name || 'Anónimo',
+        text: decrypt(comment.comment_content) || comment.comment_content
+      })) || [],
+      reports: publication.reports?.length || 0
+    };
+  }
+
+  async create(data: CreatePublicationDTO): Promise<Post> {
     const encryptedContent = encrypt(data.content);
     if (!encryptedContent) {
       throw new ApiError('Error al encriptar el contenido', 500);
     }
 
     try {
-      return await this.prisma.publication.create({
+      const publication = await this.prisma.publication.create({
         data: {
           content: encryptedContent,
+          title: data.title,
+          image_url: data.imageUrl,
           user_uuid: data.userUuid || '',
           status: PublicationStatus.active
         },
@@ -48,11 +86,21 @@ export class PublicationService {
               name: true
             }
           },
-          Comment: true,
+          Comment: {
+            include: {
+              user: {
+                select: {
+                  name: true
+                }
+              }
+            }
+          },
           Like: true,
           reports: true
         }
-      }) as unknown as Publication;
+      });
+
+      return this.transformToPost(publication);
     } catch (error) {
       if (error instanceof Error) {
         if ('code' in error && error.code === 'P2003') {
@@ -64,14 +112,11 @@ export class PublicationService {
     }
   }
 
-  /**
-   * Obtener todas las publicaciones con paginación y filtros
-   */
   async getAll(
     page: number = 1,
     limit: number = 10,
     status?: PublicationStatus
-  ): Promise<{ publications: Publication[]; total: number }> {
+  ): Promise<{ posts: Post[]; total: number }> {
     const skip = (page - 1) * limit;
     const where: Prisma.PublicationWhereInput = status ? { status } : {};
 
@@ -85,7 +130,15 @@ export class PublicationService {
               name: true
             }
           },
-          Comment: true,
+          Comment: {
+            include: {
+              user: {
+                select: {
+                  name: true
+                }
+              }
+            }
+          },
           Like: true,
           reports: true
         },
@@ -98,22 +151,13 @@ export class PublicationService {
       this.prisma.publication.count({ where })
     ]);
 
-    // Desencriptar contenido de las publicaciones
-    const decryptedPublications = publications.map((pub: Publication) => ({
-      ...pub,
-      content: decrypt(pub.content) || pub.content
-    }));
-
     return {
-      publications: decryptedPublications,
+      posts: publications.map(pub => this.transformToPost(pub as Publication)),
       total
     };
   }
 
-  /**
-   * Obtener una publicación por UUID
-   */
-  async getByUuid(uuid: string): Promise<Publication | null> {
+  async getByUuid(uuid: string): Promise<Post | null> {
     const publication = await this.prisma.publication.findUnique({
       where: { uuid },
       include: {
@@ -123,7 +167,15 @@ export class PublicationService {
             name: true
           }
         },
-        Comment: true,
+        Comment: {
+          include: {
+            user: {
+              select: {
+                name: true
+              }
+            }
+          }
+        },
         Like: true,
         reports: true
       }
@@ -133,19 +185,12 @@ export class PublicationService {
       return null;
     }
 
-    // Desencriptar contenido
-    return {
-      ...publication,
-      content: decrypt(publication.content) || publication.content
-    };
+    return this.transformToPost(publication);
   }
 
-  /**
-   * Actualizar el estado de una publicación
-   */
-  async updateStatus(uuid: string, status: PublicationStatus): Promise<Publication> {
+  async updateStatus(uuid: string, status: PublicationStatus): Promise<Post> {
     try {
-      return await this.prisma.publication.update({
+      const publication = await this.prisma.publication.update({
         where: { uuid },
         data: { status },
         include: {
@@ -155,11 +200,21 @@ export class PublicationService {
               name: true
             }
           },
-          Comment: true,
+          Comment: {
+            include: {
+              user: {
+                select: {
+                  name: true
+                }
+              }
+            }
+          },
           Like: true,
           reports: true
         }
       });
+
+      return this.transformToPost(publication);
     } catch (error) {
       if (error instanceof Error) {
         if ('code' in error && error.code === 'P2025') {
@@ -171,9 +226,6 @@ export class PublicationService {
     }
   }
 
-  /**
-   * Eliminar una publicación
-   */
   async delete(uuid: string): Promise<void> {
     try {
       await this.prisma.publication.delete({
@@ -190,23 +242,22 @@ export class PublicationService {
     }
   }
 
-  // En PublicationService
-async getNextAnonymousName(): Promise<string> {
-  const lastAnonymous = await this.prisma.user.findFirst({
-    where: {
-      name: {
-        startsWith: 'Anónimo'
+  async getNextAnonymousName(): Promise<string> {
+    const lastAnonymous = await this.prisma.user.findFirst({
+      where: {
+        name: {
+          startsWith: 'Anónimo'
+        }
+      },
+      orderBy: {
+        name: 'desc'
       }
-    },
-    orderBy: {
-      name: 'desc'
-    }
-  });
+    });
 
-  const nextNumber = lastAnonymous 
-    ? parseInt(lastAnonymous.name.split(' ')[1]) + 1 
-    : 1;
+    const nextNumber = lastAnonymous 
+      ? parseInt(lastAnonymous.name.split(' ')[1]) + 1 
+      : 1;
 
-  return `Anónimo ${nextNumber}`;
-}
+    return `Anónimo ${nextNumber}`;
+  }
 }

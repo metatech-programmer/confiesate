@@ -51,11 +51,11 @@ export class PublicationController {
       const limit = Number(req.query.limit) || 10;
       const status = req.query.status as PublicationStatus | undefined;
 
-      const { publications, total } = await this.publicationService.getAll(page, limit, status);
+      const { posts, total } = await this.publicationService.getAll(page, limit, status);
 
       res.status(200).json({
         status: 'success',
-        data: publications,
+        data: posts,
         meta: {
           total,
           page,
