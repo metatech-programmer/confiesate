@@ -1,3 +1,4 @@
+// src/services/userService.js
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
@@ -63,6 +64,40 @@ const getUserByUuid = async (uuid) => {
 };
 
 /**
+ * Obtiene todos los usuarios con paginación
+ * @param {Object} options - Opciones de paginación
+ * @param {number} options.page - Número de página
+ * @param {number} options.limit - Límite de elementos por página
+ * @param {string} options.status - Filtro por estado (opcional)
+ * @returns {Promise<Object>} - Usuarios paginados
+ */
+const getAllUsers = async ({ page = 1, limit = 10, status = null }) => {
+  const skip = (page - 1) * limit;
+  
+  const whereClause = {};
+  if (status) {
+    whereClause.status = status;
+  }
+
+  const [users, total] = await Promise.all([
+    prisma.user.findMany({
+      where: whereClause,
+      skip,
+      take: limit,
+      orderBy: {
+        created_at: 'desc'
+      }
+    }),
+    prisma.user.count({ where: whereClause })
+  ]);
+
+  return {
+    data: users,
+    total
+  };
+};
+
+/**
  * Actualiza el estado de un usuario
  * @param {string} uuid - UUID del usuario
  * @param {string} status - Nuevo estado ('active', 'banned', 'deleted')
@@ -75,8 +110,22 @@ const updateUserStatus = async (uuid, status) => {
   });
 };
 
+/**
+ * Elimina un usuario lógicamente (soft delete)
+ * @param {string} uuid - UUID del usuario
+ * @returns {Promise<Object>} - Usuario eliminado
+ */
+const deleteUser = async (uuid) => {
+  return prisma.user.update({
+    where: { uuid },
+    data: { status: 'deleted' }
+  });
+};
+
 module.exports = {
   createAnonymousUser,
   getUserByUuid,
-  updateUserStatus
+  getAllUsers,
+  updateUserStatus,
+  deleteUser
 };

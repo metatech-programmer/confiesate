@@ -29,5 +29,5 @@
   "keywords": [],
   "author": "Santiago Torres (@Metatech)",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "module"
 }
