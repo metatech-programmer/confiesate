@@ -1,15 +1,15 @@
 // src/controllers/publicationController.js
-const publicationService = require('../services/publicationService');
-const userService = require('../services/userService');
-const reportService = require('../services/reportService');
-const { createExcelFile } = require('../utils/excelExporter');
-const { ApiError } = require('../utils/errorHandler');
+import * as publicationService from '../services/publicationService.js';
+import * as userService from '../services/userService.js';
+import * as reportService from '../services/reportService.js';
+import { createExcelFile } from '../utils/excelExporter.js';
+import { ApiError } from '../utils/errorHandler.js';
 
 /**
  * Crea una nueva publicación
  * Si el usuario no existe, se crea automáticamente
  */
-exports.createPublication = async (req, res, next) => {
+export const createPublication = async (req, res, next) => {
   try {
     const { content, userUuid } = req.body;
     
@@ -55,7 +55,7 @@ exports.createPublication = async (req, res, next) => {
 /**
  * Obtiene una publicación por su UUID
  */
-exports.getPublicationByUuid = async (req, res, next) => {
+export const getPublicationByUuid = async (req, res, next) => {
   try {
     const { uuid } = req.params;
     const publication = await publicationService.getPublicationByUuid(uuid);
@@ -76,7 +76,7 @@ exports.getPublicationByUuid = async (req, res, next) => {
 /**
  * Obtiene todas las publicaciones con paginación
  */
-exports.getAllPublications = async (req, res, next) => {
+export const getAllPublications = async (req, res, next) => {
   try {
     const { page = 1, limit = 10, status = 'active' } = req.query;
     
@@ -104,11 +104,10 @@ exports.getAllPublications = async (req, res, next) => {
 /**
  * Actualiza una publicación
  */
-exports.updatePublication = async (req, res, next) => {
+export const updatePublication = async (req, res, next) => {
   try {
     const { uuid } = req.params;
-    const { content } = req.body;
-    const { userUuid } = req.body; // Para verificar que el usuario sea el dueño
+    const { content, userUuid } = req.body;
     
     // Verificamos que la publicación exista
     const publication = await publicationService.getPublicationByUuid(uuid);
@@ -117,7 +116,7 @@ exports.updatePublication = async (req, res, next) => {
     }
     
     // Verificamos que el usuario sea el dueño de la publicación
-    if (publication.userUuid !== userUuid) {
+    if (publication.user.uuid !== userUuid) {
       throw new ApiError('No tienes permiso para actualizar esta publicación', 403);
     }
     
@@ -138,10 +137,10 @@ exports.updatePublication = async (req, res, next) => {
 /**
  * Elimina una publicación lógicamente (cambia status a deleted)
  */
-exports.deletePublication = async (req, res, next) => {
+export const deletePublication = async (req, res, next) => {
   try {
     const { uuid } = req.params;
-    const { userUuid } = req.body; // Para verificar que el usuario sea el dueño
+    const { userUuid } = req.body;
     
     // Verificamos que la publicación exista
     const publication = await publicationService.getPublicationByUuid(uuid);
@@ -150,7 +149,7 @@ exports.deletePublication = async (req, res, next) => {
     }
     
     // Verificamos que el usuario sea el dueño de la publicación
-    if (publication.userUuid !== userUuid) {
+    if (publication.user.uuid !== userUuid) {
       throw new ApiError('No tienes permiso para eliminar esta publicación', 403);
     }
     
@@ -170,7 +169,7 @@ exports.deletePublication = async (req, res, next) => {
  * Reporta una publicación
  * Si alcanza 20 reportes, se marca automáticamente como flagged
  */
-exports.reportPublication = async (req, res, next) => {
+export const reportPublication = async (req, res, next) => {
   try {
     const { publicationUuid } = req.params;
     const { reporterUuid } = req.body;
@@ -224,7 +223,7 @@ exports.reportPublication = async (req, res, next) => {
  * Exporta todas las publicaciones en formato Excel o JSON
  * Requiere autenticación (implementada en middleware)
  */
-exports.exportPublications = async (req, res, next) => {
+export const exportPublications = async (req, res, next) => {
   try {
     const { format = 'excel' } = req.query;
     

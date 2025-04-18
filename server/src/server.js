@@ -1,9 +1,25 @@
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
-const path = require('path');
-require('dotenv').config();
+// src/server.js
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import { fileURLToPath } from 'url';
+import path from 'path';
+import dotenv from 'dotenv';
+
+// Import routes
+import publicationRoutes from './routes/publicationRoutes.js';
+import reportRoutes from './routes/reportRoutes.js';
+import exportRoutes from './routes/exportRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+
+// Import error handler
+import { errorMiddleware } from './utils/errorHandler.js';
+
+// Environment variables configuration
+dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,26 +32,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/publications', require('./routes/publicationRoutes'));
-app.use('/api/reports', require('./routes/reportRoutes'));
-app.use('/api/export', require('./routes/exportRoutes'));
+app.use('/api/publications', publicationRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/export', exportRoutes);
+app.use('/api/users', userRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
 
-// Error handler
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(err.statusCode || 500).json({
-    status: 'error',
-    message: err.message || 'Internal Server Error',
-  });
-});
+// Error handler middleware
+app.use(errorMiddleware);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-module.exports = app;
+export default app;

@@ -1,7 +1,9 @@
 // src/utils/encryption.js
-const crypto = require('crypto');
+import crypto from 'crypto';
+import dotenv from 'dotenv';
 
 // Obtener configuración de variables de entorno
+dotenv.config();
 const encryptionKey = process.env.ENCRYPTION_KEY;
 const encryptionIV = process.env.ENCRYPTION_IV;
 
@@ -23,7 +25,7 @@ const iv = Buffer.from(encryptionIV);
  * @param {string} text - Texto a encriptar
  * @returns {string} - Texto encriptado en formato hexadecimal
  */
-const encrypt = (text) => {
+export const encrypt = (text) => {
   if (!text) return null;
   
   const cipher = crypto.createCipheriv(algorithm, key, iv);
@@ -37,16 +39,11 @@ const encrypt = (text) => {
  * @param {string} encryptedText - Texto encriptado en formato hexadecimal
  * @returns {string} - Texto original desencriptado
  */
-const decrypt = (encryptedText) => {
+export const decrypt = (encryptedText) => {
   if (!encryptedText) return null;
   
   const decipher = crypto.createDecipheriv(algorithm, key, iv);
   let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
   decrypted += decipher.final('utf8');
   return decrypted;
-};
-
-module.exports = {
-  encrypt,
-  decrypt
 };

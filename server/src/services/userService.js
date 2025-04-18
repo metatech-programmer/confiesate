@@ -1,12 +1,13 @@
 // src/services/userService.js
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient } from '@prisma/client';
+
 const prisma = new PrismaClient();
 
 /**
  * Obtiene el siguiente número para un usuario anónimo 
  * @returns {Promise<number>} - Siguiente número secuencial
  */
-const getNextAnonymousNumber = async () => {
+export const getNextAnonymousNumber = async () => {
   const lastUser = await prisma.user.findFirst({
     where: {
       name: {
@@ -35,7 +36,7 @@ const getNextAnonymousNumber = async () => {
  * Crea un nuevo usuario anónimo
  * @returns {Promise<Object>} - Nuevo usuario creado
  */
-const createAnonymousUser = async () => {
+export const createAnonymousUser = async () => {
   const nextNumber = await getNextAnonymousNumber();
   const name = `Anónimo ${nextNumber}`;
   
@@ -57,7 +58,7 @@ const createAnonymousUser = async () => {
  * @param {string} uuid - UUID del usuario
  * @returns {Promise<Object|null>} - Usuario encontrado o null
  */
-const getUserByUuid = async (uuid) => {
+export const getUserByUuid = async (uuid) => {
   return prisma.user.findUnique({
     where: { uuid }
   });
@@ -71,7 +72,7 @@ const getUserByUuid = async (uuid) => {
  * @param {string} options.status - Filtro por estado (opcional)
  * @returns {Promise<Object>} - Usuarios paginados
  */
-const getAllUsers = async ({ page = 1, limit = 10, status = null }) => {
+export const getAllUsers = async ({ page = 1, limit = 10, status = null }) => {
   const skip = (page - 1) * limit;
   
   const whereClause = {};
@@ -103,7 +104,7 @@ const getAllUsers = async ({ page = 1, limit = 10, status = null }) => {
  * @param {string} status - Nuevo estado ('active', 'banned', 'deleted')
  * @returns {Promise<Object>} - Usuario actualizado
  */
-const updateUserStatus = async (uuid, status) => {
+export const updateUserStatus = async (uuid, status) => {
   return prisma.user.update({
     where: { uuid },
     data: { status }
@@ -115,17 +116,9 @@ const updateUserStatus = async (uuid, status) => {
  * @param {string} uuid - UUID del usuario
  * @returns {Promise<Object>} - Usuario eliminado
  */
-const deleteUser = async (uuid) => {
+export const deleteUser = async (uuid) => {
   return prisma.user.update({
     where: { uuid },
     data: { status: 'deleted' }
   });
-};
-
-module.exports = {
-  createAnonymousUser,
-  getUserByUuid,
-  getAllUsers,
-  updateUserStatus,
-  deleteUser
 };

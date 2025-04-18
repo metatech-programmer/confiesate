@@ -114,7 +114,4 @@ const exportDataToJson = async () => {
   };
 };
 
-module.exports = {
-  exportPublicationsToExcel,
-  exportDataToJson
-};
+module.exports = { exportPublicationsToExcel, exportDataToJson };

@@ -1,35 +1,21 @@
-const { PrismaClient } = require('@prisma/client');
-const { encrypt, decrypt } = require('../utils/encryption');
-const userService = require('./userService');
+// src/services/publicationService.js
+import { PrismaClient } from '@prisma/client';
+import { encrypt, decrypt } from '../utils/encryption.js';
+import * as userService from './userService.js';
+
 const prisma = new PrismaClient();
 
 /**
  * Crea una nueva publicación
- * @param {string} content - Contenido de la publicación
- * @param {string|null} userUuid - UUID del usuario si existe
- * @returns {Promise<Object>} - Publicación creada y datos del usuario
+ * @param {Object} data - Datos de la publicación
+ * @param {string} data.content - Contenido de la publicación
+ * @param {string|null} data.userUuid - UUID del usuario si existe
+ * @returns {Promise<Object>} - Publicación creada
  */
-const createPublication = async (content, userUuid = null) => {
+export const createPublication = async ({ content, userUuid = null }) => {
   // Primero encriptamos el contenido
   const encryptedContent = encrypt(content);
   
-  // Si no hay userUuid, creamos un usuario anónimo
-  let user;
-  if (!userUuid) {
-    user = await userService.createAnonymousUser();
-    userUuid = user.uuid;
-  } else {
-    // Verificamos que el usuario exista
-    const existingUser = await userService.getUserByUuid(userUuid);
-    if (!existingUser || existingUser.status !== 'active') {
-      throw new Error('Usuario no encontrado o no activo');
-    }
-    user = {
-      uuid: existingUser.uuid,
-      name: existingUser.name
-    };
-  }
-
   // Creamos la publicación
   const publication = await prisma.publication.create({
     data: {
@@ -41,13 +27,12 @@ const createPublication = async (content, userUuid = null) => {
 
   // Desencriptamos el contenido para devolverlo
   return {
-    publication: {
-      uuid: publication.uuid,
-      content: decrypt(publication.content),
-      status: publication.status,
-      created_at: publication.created_at
-    },
-    user
+    uuid: publication.uuid,
+    content: decrypt(publication.content),
+    status: publication.status,
+    userUuid: publication.user_uuid,
+    created_at: publication.created_at,
+    updated_at: publication.updated_at
   };
 };
 
@@ -56,7 +41,7 @@ const createPublication = async (content, userUuid = null) => {
  * @param {string} uuid - UUID de la publicación
  * @returns {Promise<Object|null>} - Publicación encontrada o null
  */
-const getPublicationByUuid = async (uuid) => {
+export const getPublicationByUuid = async (uuid) => {
   const publication = await prisma.publication.findUnique({
     where: { uuid },
     include: {
@@ -65,31 +50,36 @@ const getPublicationByUuid = async (uuid) => {
           uuid: true,
           name: true
         }
-      }
+      },
+      reports: true
     }
   });
 
   if (!publication) return null;
 
   return {
-    ...publication,
+    uuid: publication.uuid,
     content: decrypt(publication.content),
-    user_uuid: undefined, // No exponemos esta relación
+    status: publication.status,
+    created_at: publication.created_at,
+    updated_at: publication.updated_at,
     user: {
       uuid: publication.user.uuid,
       name: publication.user.name
-    }
+    },
+    reportCount: publication.reports.length
   };
 };
 
 /**
- * Obtiene publicaciones con paginación
- * @param {number} page - Número de página
- * @param {number} limit - Límite de elementos por página
- * @param {string} status - Filtro por estado (opcional)
+ * Obtiene todas las publicaciones con paginación
+ * @param {Object} options - Opciones de paginación
+ * @param {number} options.page - Número de página
+ * @param {number} options.limit - Límite de elementos por página
+ * @param {string} options.status - Filtro por estado
  * @returns {Promise<Object>} - Publicaciones paginadas
  */
-const getPublications = async (page = 1, limit = 10, status = null) => {
+export const getAllPublications = async ({ page = 1, limit = 10, status = 'active' }) => {
   const skip = (page - 1) * limit;
   
   const whereClause = {};
@@ -111,7 +101,8 @@ const getPublications = async (page = 1, limit = 10, status = null) => {
             uuid: true,
             name: true
           }
-        }
+        },
+        reports: true
       }
     }),
     prisma.publication.count({ where: whereClause })
@@ -127,16 +118,50 @@ const getPublications = async (page = 1, limit = 10, status = null) => {
     user: {
       uuid: pub.user.uuid,
       name: pub.user.name
-    }
+    },
+    reportCount: pub.reports.length
   }));
 
   return {
     data: decryptedPublications,
-    meta: {
-      total,
-      page,
-      limit,
-      pages: Math.ceil(total / limit)
+    total
+  };
+};
+
+/**
+ * Actualiza una publicación
+ * @param {string} uuid - UUID de la publicación
+ * @param {Object} data - Datos a actualizar
+ * @param {string} data.content - Nuevo contenido
+ * @returns {Promise<Object>} - Publicación actualizada
+ */
+export const updatePublication = async (uuid, { content }) => {
+  const encryptedContent = encrypt(content);
+  
+  const publication = await prisma.publication.update({
+    where: { uuid },
+    data: { 
+      content: encryptedContent
+    },
+    include: {
+      user: {
+        select: {
+          uuid: true,
+          name: true
+        }
+      }
+    }
+  });
+
+  return {
+    uuid: publication.uuid,
+    content: decrypt(publication.content),
+    status: publication.status,
+    created_at: publication.created_at,
+    updated_at: publication.updated_at,
+    user: {
+      uuid: publication.user.uuid,
+      name: publication.user.name
     }
   };
 };
@@ -147,7 +172,7 @@ const getPublications = async (page = 1, limit = 10, status = null) => {
  * @param {string} status - Nuevo estado ('active', 'flagged', 'deleted')
  * @returns {Promise<Object>} - Publicación actualizada
  */
-const updatePublicationStatus = async (uuid, status) => {
+export const updatePublicationStatus = async (uuid, status) => {
   const publication = await prisma.publication.update({
     where: { uuid },
     data: { status }
@@ -160,9 +185,93 @@ const updatePublicationStatus = async (uuid, status) => {
   };
 };
 
-module.exports = {
-  createPublication,
-  getPublicationByUuid,
-  getPublications,
-  updatePublicationStatus
+/**
+ * Elimina una publicación (soft delete)
+ * @param {string} uuid - UUID de la publicación
+ * @returns {Promise<Object>} - Resultado de la operación
+ */
+export const deletePublication = async (uuid) => {
+  return prisma.publication.update({
+    where: { uuid },
+    data: { status: 'deleted' }
+  });
+};
+
+/**
+ * Obtiene todas las publicaciones de un usuario
+ * @param {Object} options - Opciones de filtrado y paginación
+ * @param {string} options.userUuid - UUID del usuario
+ * @param {number} options.page - Número de página
+ * @param {number} options.limit - Límite de elementos por página
+ * @param {string} options.status - Filtro por estado
+ * @returns {Promise<Object>} - Publicaciones del usuario paginadas
+ */
+export const getPublicationsByUser = async ({ userUuid, page = 1, limit = 10, status = 'active' }) => {
+  const skip = (page - 1) * limit;
+  
+  const whereClause = {
+    user_uuid: userUuid
+  };
+  
+  if (status) {
+    whereClause.status = status;
+  }
+
+  const [publications, total] = await Promise.all([
+    prisma.publication.findMany({
+      where: whereClause,
+      skip,
+      take: limit,
+      orderBy: {
+        created_at: 'desc'
+      },
+      include: {
+        reports: true
+      }
+    }),
+    prisma.publication.count({ where: whereClause })
+  ]);
+
+  // Desencriptamos el contenido
+  const decryptedPublications = publications.map(pub => ({
+    uuid: pub.uuid,
+    content: decrypt(pub.content),
+    status: pub.status,
+    created_at: pub.created_at,
+    updated_at: pub.updated_at,
+    reportCount: pub.reports.length
+  }));
+
+  return {
+    data: decryptedPublications,
+    total
+  };
+};
+
+/**
+ * Obtiene todas las publicaciones para exportación (sin paginación)
+ * @returns {Promise<Array>} - Todas las publicaciones
+ */
+export const getAllPublicationsForExport = async () => {
+  const publications = await prisma.publication.findMany({
+    include: {
+      user: {
+        select: {
+          uuid: true,
+          name: true,
+          status: true
+        }
+      },
+      reports: {
+        select: {
+          uuid: true,
+          reporter_uuid: true,
+          created_at: true
+        }
+      }
+    }
+  });
+
+  // No desencriptamos aquí, lo haremos en el servicio de exportación
+  return publications;
 };
