@@ -37,7 +37,7 @@ function App() {
   }, [title]);
 
 
-  const [items, setItems] = useState<Item[]>(itemsData );
+  const [items] = useState<Item[]>(itemsData );
 
   return (
     <div className="w-full bg-gradient-to-b from-transparent from-70%  to-app-bluePurple/50 pb-24 relative">

@@ -13,7 +13,7 @@ const Loading = () => {
   return (
     <>
       <section className="columns-2 md:columns-4 gap-4 px-4 md:px-16 md:pt-4">
-        {Array.from({ length: 10 }).map((_, i) => (
+        {Array.from({ length: 10 }).map((_) => (
           <div className="break-inside-avoid mb-4 md:hover:scale-105 bg-app-bluePurple rounded-xl transition-all md:hover:shadow-lg md:hover:shadow-app-purple/70 mix-blend-plus-darker relative hover:cursor-pointer">
             <div className="relative">
               <img
