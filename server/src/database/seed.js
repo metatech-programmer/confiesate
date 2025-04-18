@@ -73,6 +73,23 @@ async function main() {
   });
 
   console.log('Creado 1 reporte');
+
+  // Crear algunos likes
+  await prisma.like.create({
+    data: {
+      publication_uuid: publicaciones[0].uuid,
+      user_uuid: anonimo2.uuid
+    }
+  });
+
+  // Crear algunos comentarios
+  await prisma.comment.create({
+    data: {
+      publication_uuid: publicaciones[0].uuid,
+      user_uuid: anonimo2.uuid,
+      comment_content: encrypt('¡Buen post!')
+    }
+  });
   
   console.log('¡Siembra de datos completada!');
 }

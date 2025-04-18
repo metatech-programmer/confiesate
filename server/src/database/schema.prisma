@@ -64,3 +64,35 @@ model Report {
   @@index([reporter_uuid])
   @@map("reports")
 }
+
+model Like {
+  id               Int      @id @default(autoincrement())
+  uuid             String   @unique @default(uuid())
+  publication_uuid String
+  user_uuid        String
+  created_at       DateTime @default(now())
+
+  publication Publication @relation(fields: [publication_uuid], references: [uuid])
+  user        User        @relation(fields: [user_uuid], references: [uuid])
+
+  @@unique([publication_uuid, user_uuid])
+  @@index([publication_uuid])
+  @@index([user_uuid])
+  @@map("likes")
+}
+
+model Comment {
+  id               Int      @id @default(autoincrement())
+  uuid             String   @unique @default(uuid())
+  publication_uuid String
+  user_uuid        String
+  comment_content  String
+  created_at       DateTime @default(now())
+
+  publication Publication @relation(fields: [publication_uuid], references: [uuid])
+  user        User        @relation(fields: [user_uuid], references: [uuid])
+
+  @@index([publication_uuid])
+  @@index([user_uuid])
+  @@map("comments")
+}

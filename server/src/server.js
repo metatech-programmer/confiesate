@@ -12,6 +12,8 @@ import reportRoutes from './routes/reportRoutes.js';
 import exportRoutes from './routes/exportRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import likeRoutes from './routes/likeRoutes.js';
+import commentRoutes from './routes/commentRoutes.js';
 
 // Import error handler
 import { errorMiddleware } from './utils/errorHandler.js';
@@ -37,6 +39,8 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/export', exportRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/likes', likeRoutes);
+app.use('/api/comments', commentRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

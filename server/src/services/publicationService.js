@@ -50,7 +50,9 @@ export const getPublicationByUuid = async (uuid) => {
           name: true
         }
       },
-      reports: true
+      reports: true,
+      likes: true,
+      comments: true
     }
   });
 
@@ -66,7 +68,14 @@ export const getPublicationByUuid = async (uuid) => {
       uuid: publication.user.uuid,
       name: publication.user.name
     },
-    reportCount: publication.reports.length
+    reportCount: publication.reports.length,
+    likeCount: publication.likes.length,
+    comments: publication.comments.map(c => ({
+      uuid: c.uuid,
+      user_uuid: c.user_uuid,
+      comment_content: decrypt(c.comment_content),
+      created_at: c.created_at
+    }))
   };
 };
 
@@ -101,7 +110,9 @@ export const getAllPublications = async ({ page = 1, limit = 10, status = 'activ
             name: true
           }
         },
-        reports: true
+        reports: true,
+        likes: true,
+        comments: true
       }
     }),
     prisma.publication.count({ where: whereClause })
@@ -118,7 +129,14 @@ export const getAllPublications = async ({ page = 1, limit = 10, status = 'activ
       uuid: pub.user.uuid,
       name: pub.user.name
     },
-    reportCount: pub.reports.length
+    reportCount: pub.reports.length,
+    likeCount: pub.likes.length,
+    comments: pub.comments.map(c => ({
+      uuid: c.uuid,
+      user_uuid: c.user_uuid,
+      comment_content: decrypt(c.comment_content),
+      created_at: c.created_at
+    }))
   }));
 
   return {
@@ -265,6 +283,21 @@ export const getAllPublicationsForExport = async () => {
         select: {
           uuid: true,
           reporter_uuid: true,
+          created_at: true
+        }
+      },
+      likes: {
+        select: {
+          uuid: true,
+          user_uuid: true,
+          created_at: true
+        }
+      },
+      comments: {
+        select: {
+          uuid: true,
+          user_uuid: true,
+          comment_content: true,
           created_at: true
         }
       }
