@@ -19,16 +19,27 @@ enum PublicationStatus {
   deleted
 }
 
+enum UserRole {
+  user
+  admin
+}
+
 model User {
-  id         Int         @id @default(autoincrement())
-  uuid       String      @unique @default(uuid())
+  id         Int        @id @default(autoincrement())
+  uuid       String     @unique @default(uuid())
   name       String
-  status     UserStatus  @default(active)
-  created_at DateTime    @default(now())
-  updated_at DateTime    @updatedAt
+  email      String     @unique
+  password   String
+  role       UserRole   @default(user)
+  status     UserStatus @default(active)
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  last_login DateTime?
 
   publications Publication[]
   reports      Report[]      @relation("ReporterRelation")
+  Like         Like[]
+  Comment      Comment[]
 
   @@map("users")
 }
@@ -42,8 +53,10 @@ model Publication {
   created_at DateTime          @default(now())
   updated_at DateTime          @updatedAt
 
-  user    User     @relation(fields: [user_uuid], references: [uuid])
+  user    User      @relation(fields: [user_uuid], references: [uuid])
   reports Report[]
+  Like    Like[]
+  Comment Comment[]
 
   @@index([user_uuid])
   @@map("publications")

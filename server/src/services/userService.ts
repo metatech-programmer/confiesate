@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, UserRole, UserStatus } from '@prisma/client';
 import { ApiError } from '../utils/errorHandler';
 import bcrypt from 'bcrypt';
 
@@ -7,10 +7,11 @@ interface User {
   name: string;
   email: string;
   password: string;
-  role: string;
-  status: string;
+  role: UserRole;
+  status: UserStatus;
   created_at: Date;
-  last_login?: Date;
+  updated_at: Date;
+  last_login: Date | null;
 }
 
 interface CreateUserDTO {
@@ -41,7 +42,7 @@ export class UserService {
       throw new ApiError('Credenciales inválidas', 401);
     }
 
-    if (user.status !== 'active') {
+    if (user.status !== UserStatus.active) {
       throw new ApiError('Usuario inactivo', 403);
     }
 
@@ -72,10 +73,10 @@ export class UserService {
           name: data.name,
           email: data.email,
           password: hashedPassword,
-          role: data.role || 'user',
-          status: 'active'
+          role: (data.role as UserRole) || UserRole.user,
+          status: UserStatus.active
         }
-      });
+      }) as User;
     } catch (error) {
       if (error instanceof Error) {
         if ('code' in error && error.code === 'P2002') {
@@ -93,13 +94,13 @@ export class UserService {
   async getAll(
     page: number = 1,
     limit: number = 10,
-    role?: string,
-    status?: string
+    role?: UserRole,
+    status?: UserStatus
   ): Promise<{ users: User[]; total: number }> {
     const skip = (page - 1) * limit;
     const where = {
-      ...(role && { role }),
-      ...(status && { status })
+      ...(role && { role: role as UserRole }),
+      ...(status && { status: status as UserStatus })
     };
 
     const [users, total] = await Promise.all([
@@ -114,17 +115,18 @@ export class UserService {
           uuid: true,
           name: true,
           email: true,
+          password: true,
           role: true,
           status: true,
           created_at: true,
-          last_login: true,
-          password: false
+          updated_at: true,
+          last_login: true
         }
       }),
       this.prisma.user.count({ where })
     ]);
 
-    return { users, total };
+    return { users: users as User[], total };
   }
 
   /**
@@ -140,6 +142,7 @@ export class UserService {
         role: true,
         status: true,
         created_at: true,
+        updated_at: true,
         last_login: true,
         password: true
       }
@@ -153,7 +156,18 @@ export class UserService {
    */
   async findByEmail(email: string): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
-      where: { email }
+      where: { email },
+      select: {
+        uuid: true,
+        name: true,
+        email: true,
+        role: true,
+        status: true,
+        created_at: true,
+        updated_at: true,
+        last_login: true,
+        password: true
+      }
     });
 
     return user;
@@ -180,8 +194,9 @@ export class UserService {
           role: true,
           status: true,
           created_at: true,
+          updated_at: true,
           last_login: true,
-          password: false
+          password: true
         }
       });
     } catch (error) {
@@ -201,7 +216,7 @@ export class UserService {
   /**
    * Actualizar el rol de un usuario
    */
-  async updateRole(uuid: string, role: string): Promise<User> {
+  async updateRole(uuid: string, role: UserRole): Promise<User> {
     try {
       return await this.prisma.user.update({
         where: { uuid },
@@ -213,10 +228,11 @@ export class UserService {
           role: true,
           status: true,
           created_at: true,
+          updated_at: true,
           last_login: true,
-          password: false
+          password: true
         }
-      });
+      }) as User;
     } catch (error) {
       if (error instanceof Error) {
         if ('code' in error && error.code === 'P2025') {

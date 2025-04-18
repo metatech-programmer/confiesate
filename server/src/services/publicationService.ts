@@ -1,11 +1,11 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, PublicationStatus, Prisma } from '@prisma/client';
 import { ApiError } from '../utils/errorHandler';
 import { encrypt, decrypt } from '../utils/encryption';
 
 interface Publication {
   uuid: string;
   content: string;
-  status: string;
+  status: PublicationStatus;
   user_uuid: string | null;
   created_at: Date;
   user?: {
@@ -29,12 +29,17 @@ export class PublicationService {
    * Crear una nueva publicación
    */
   async create(data: CreatePublicationDTO): Promise<Publication> {
+    const encryptedContent = encrypt(data.content);
+    if (!encryptedContent) {
+      throw new ApiError('Error al encriptar el contenido', 500);
+    }
+
     try {
       return await this.prisma.publication.create({
         data: {
-          content: encrypt(data.content),
-          user_uuid: data.userUuid,
-          status: 'pending'
+          content: encryptedContent,
+          user_uuid: data.userUuid || '',
+          status: PublicationStatus.active
         },
         include: {
           user: {
@@ -43,11 +48,11 @@ export class PublicationService {
               name: true
             }
           },
-          comments: true,
-          likes: true,
+          Comment: true,
+          Like: true,
           reports: true
         }
-      });
+      }) as unknown as Publication;
     } catch (error) {
       if (error instanceof Error) {
         if ('code' in error && error.code === 'P2003') {
@@ -65,10 +70,10 @@ export class PublicationService {
   async getAll(
     page: number = 1,
     limit: number = 10,
-    status?: string
+    status?: PublicationStatus
   ): Promise<{ publications: Publication[]; total: number }> {
     const skip = (page - 1) * limit;
-    const where = status ? { status } : {};
+    const where: Prisma.PublicationWhereInput = status ? { status } : {};
 
     const [publications, total] = await Promise.all([
       this.prisma.publication.findMany({
@@ -80,8 +85,8 @@ export class PublicationService {
               name: true
             }
           },
-          comments: true,
-          likes: true,
+          Comment: true,
+          Like: true,
           reports: true
         },
         orderBy: {
@@ -118,8 +123,8 @@ export class PublicationService {
             name: true
           }
         },
-        comments: true,
-        likes: true,
+        Comment: true,
+        Like: true,
         reports: true
       }
     });
@@ -138,7 +143,7 @@ export class PublicationService {
   /**
    * Actualizar el estado de una publicación
    */
-  async updateStatus(uuid: string, status: string): Promise<Publication> {
+  async updateStatus(uuid: string, status: PublicationStatus): Promise<Publication> {
     try {
       return await this.prisma.publication.update({
         where: { uuid },
@@ -150,8 +155,8 @@ export class PublicationService {
               name: true
             }
           },
-          comments: true,
-          likes: true,
+          Comment: true,
+          Like: true,
           reports: true
         }
       });

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { PublicationService } from '../services/publicationService';
 import { ApiError } from '../utils/errorHandler';
 import { encrypt } from '../utils/encryption';
+import { PublicationStatus } from '@prisma/client';
 
 interface AuthenticatedRequest extends Request {
   user?: {
@@ -48,7 +49,7 @@ export class PublicationController {
     try {
       const page = Number(req.query.page) || 1;
       const limit = Number(req.query.limit) || 10;
-      const status = req.query.status as string;
+      const status = req.query.status as PublicationStatus | undefined;
 
       const { publications, total } = await this.publicationService.getAll(page, limit, status);
 

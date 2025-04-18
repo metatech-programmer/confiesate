@@ -18,7 +18,7 @@ export class ExportService {
               name: true
             }
           },
-          comments: {
+          Comment: {
             include: {
               user: {
                 select: {
@@ -28,7 +28,7 @@ export class ExportService {
               }
             }
           },
-          likes: {
+          Like: {
             include: {
               user: {
                 select: {

@@ -3,7 +3,7 @@ import { ApiError } from '../utils/errorHandler';
 
 interface Comment {
   uuid: string;
-  content: string;
+  comment_content: string;
   user_uuid: string;
   publication_uuid: string;
   created_at: Date;
@@ -29,7 +29,7 @@ export class CommentService {
     try {
       return await this.prisma.comment.create({
         data: {
-          content: data.content,
+          comment_content: data.content,
           user_uuid: data.userUuid,
           publication_uuid: data.publicationUuid
         },

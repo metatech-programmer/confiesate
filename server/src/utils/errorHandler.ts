@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, ErrorRequestHandler } from 'express';
 
 /**
  * Clase para manejar errores de la API
@@ -21,22 +21,23 @@ export class ApiError extends Error {
 /**
  * Middleware para manejar errores globalmente
  */
-export const errorMiddleware = (
+export const errorMiddleware: ErrorRequestHandler = (
   error: Error | ApiError,
   _req: Request,
   res: Response,
   _next: NextFunction
-): Response => {
+): void => {
   console.error('Error:', error);
 
   if (error instanceof ApiError) {
-    return res.status(error.statusCode).json({
+    res.status(error.statusCode).json({
       status: 'error',
       message: error.message
     });
+    return;
   }
 
-  return res.status(500).json({
+  res.status(500).json({
     status: 'error',
     message: 'Error interno del servidor'
   });
