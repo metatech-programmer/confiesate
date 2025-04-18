@@ -189,4 +189,24 @@ export class PublicationService {
       throw new ApiError('Error interno del servidor', 500);
     }
   }
+
+  // En PublicationService
+async getNextAnonymousName(): Promise<string> {
+  const lastAnonymous = await this.prisma.user.findFirst({
+    where: {
+      name: {
+        startsWith: 'Anónimo'
+      }
+    },
+    orderBy: {
+      name: 'desc'
+    }
+  });
+
+  const nextNumber = lastAnonymous 
+    ? parseInt(lastAnonymous.name.split(' ')[1]) + 1 
+    : 1;
+
+  return `Anónimo ${nextNumber}`;
+}
 }
