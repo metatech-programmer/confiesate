@@ -1,6 +1,29 @@
 # Backend para Sistema de Confesiones USTA
 
-API RESTful para el sistema de confesiones anónimas de la, desarrollado con Node.js, Express y PostgreSQL.
+API RESTful para el sistema de confesiones anónimas de la Universidad Santo Tomás, desarrollado con Node.js, Express y PostgreSQL.
+
+## Tabla de Contenidos
+
+- [Backend para Sistema de Confesiones USTA](#backend-para-sistema-de-confesiones-usta)
+  - [Tabla de Contenidos](#tabla-de-contenidos)
+  - [Características](#características)
+  - [Requisitos Previos](#requisitos-previos)
+  - [Instalación](#instalación)
+  - [Configuración](#configuración)
+  - [Uso](#uso)
+  - [API Endpoints](#api-endpoints)
+    - [Autenticación](#autenticación)
+    - [Publicaciones](#publicaciones)
+    - [Interacciones](#interacciones)
+    - [Administración](#administración)
+  - [Seguridad](#seguridad)
+  - [Solución de Problemas](#solución-de-problemas)
+    - [Problemas Comunes](#problemas-comunes)
+    - [Logs y Depuración](#logs-y-depuración)
+  - [Desarrollo](#desarrollo)
+    - [Scripts Disponibles](#scripts-disponibles)
+    - [Base de Datos](#base-de-datos)
+  - [Contribución](#contribución)
 
 ## Características
 
@@ -12,116 +35,123 @@ API RESTful para el sistema de confesiones anónimas de la, desarrollado con Nod
 - Exportación de datos a Excel
 - Encriptación de contenido sensible
 
-## Requisitos previos
+## Requisitos Previos
 
 - Node.js 16 o superior
 - PostgreSQL 12 o superior
 - npm
 
-## Instalación y Configuración
+## Instalación
 
-1. Clonar el repositorio:
-
+1. **Clonar el Repositorio**
 ```bash
 git clone https://github.com/tu-usuario/confesiones-usta.git
 cd confesiones-usta/server
 ```
 
-2. Instalar dependencias:
-
+2. **Instalar Dependencias**
 ```bash
 npm install
 ```
 
-3. Configurar base de datos:
+## Configuración
 
-- Crear una base de datos PostgreSQL llamada `anonymous_posts`
-- Copiar el archivo de variables de entorno:
-  ```bash
-  cp .env.example .env
-  ```
-- Editar `.env` con tus credenciales:
-  ```
-  DATABASE_URL="postgresql://usuario:contraseña@localhost:5432/anonymous_posts?schema=public"
-  JWT_SECRET="tu_clave_secreta_jwt"
-  ENCRYPTION_KEY="clave_de_32_caracteres_para_encriptar"
-  ENCRYPTION_IV="vector_de_16_chars"
-  ```
+1. **Base de Datos**
+- Crear una base de datos PostgreSQL:
+```sql
+CREATE DATABASE anonymous_posts;
+```
 
-4. Inicializar la base de datos:
-
+2. **Variables de Entorno**
+- Copiar el archivo de ejemplo:
 ```bash
-# Generar el cliente Prisma
+cp .env.example .env
+```
+
+- Configurar las variables en `.env`:
+```bash
+# Database
+DATABASE_URL="postgresql://usuario:contraseña@localhost:5432/anonymous_posts?schema=public"
+
+# Security
+JWT_SECRET="tu_clave_secreta_jwt_min_32_chars"
+ENCRYPTION_KEY="clave_de_32_caracteres_para_encriptar"
+ENCRYPTION_IV="vector_de_16_chars"
+
+# Server
+PORT=3000
+NODE_ENV=development
+```
+
+3. **Inicializar Base de Datos**
+```bash
 npm run prisma:generate
-
-# Crear la migración inicial
-npm run prisma:migrate:create
-
-# Aplicar la migración
 npm run prisma:migrate:dev
-
-# Si hay problemas, puedes reiniciar la base de datos
-npm run prisma:reset
-
-# Crear usuario administrador inicial
 npm run prisma:seed
-
-
 ```
 
-5. Estructura de directorios para migraciones:
+## Uso
 
-```
-src/
-  database/
-    migrations/      # Directorio para archivos de migración
-    schema.prisma   # Schema de la base de datos
-    seed.ts         # Script de datos iniciales
-```
-
-## Ejecución
-
-### Modo desarrollo
+1. **Desarrollo**
 ```bash
 npm run dev
 ```
-El servidor estará disponible en `http://localhost:3000`
 
-### Modo producción
+2. **Producción**
 ```bash
 npm run build
 npm start
 ```
 
-## Endpoints principales
+## API Endpoints
 
 ### Autenticación
-- `POST /api/v1/auth/register` - Registro de usuario
-- `POST /api/v1/auth/login` - Inicio de sesión
-- `GET /api/v1/auth/verify` - Verificar token JWT
 
-### Confesiones
-- `GET /api/v1/publications` - Listar confesiones
-- `POST /api/v1/publications` - Crear confesión
-- `GET /api/v1/publications/:uuid` - Ver confesión específica
-- `DELETE /api/v1/publications/:uuid` - Eliminar confesión (admin)
+1. **Registro** - `POST /api/v1/auth/register`
+```json
+// Request
+{
+  "name": "Usuario Ejemplo",
+  "email": "usuario@example.com",
+  "password": "contraseña123"
+}
+```
+
+2. **Login** - `POST /api/v1/auth/login`
+```json
+// Request
+{
+  "email": "usuario@example.com",
+  "password": "contraseña123"
+}
+```
+
+### Publicaciones
+
+1. **Listar** - `GET /api/v1/publications?page=1&limit=10`
+2. **Crear** - `POST /api/v1/publications`
+3. **Ver** - `GET /api/v1/publications/:uuid`
+4. **Eliminar** - `DELETE /api/v1/publications/:uuid` (admin)
 
 ### Interacciones
-- `POST /api/v1/likes/toggle` - Dar/quitar like
-- `POST /api/v1/comments` - Comentar confesión
-- `POST /api/v1/reports` - Reportar confesión
+
+1. **Likes**
+   - Toggle: `POST /api/v1/likes/toggle`
+   - Verificar: `GET /api/v1/likes/check/:publication_uuid`
+
+2. **Comentarios**
+   - Crear: `POST /api/v1/comments`
+   - Listar: `GET /api/v1/comments/publication/:publication_uuid`
+
+3. **Reportes**
+   - Crear: `POST /api/v1/reports`
+   - Verificar: `GET /api/v1/reports/check/:publication_uuid`
 
 ### Administración
+
 - `GET /api/v1/users` - Listar usuarios (admin)
 - `GET /api/v1/reports` - Ver reportes (admin)
 - `GET /api/v1/export/excel` - Exportar datos (admin)
-
-## Credenciales por defecto
-
-```
-Email: admin@example.com
-Contraseña: admin123
-```
 
 ## Seguridad
 
@@ -131,28 +161,58 @@ Contraseña: admin123
 - Rate limiting y protección CORS
 - Validación de datos en endpoints
 
-## Variables de Entorno Requeridas
+## Solución de Problemas
 
-| Variable | Descripción | Ejemplo |
-|----------|-------------|---------|
-| DATABASE_URL | URL de PostgreSQL | postgresql://user:pass@localhost:5432/anonymous_posts |
-| JWT_SECRET | Clave JWT (min 32 chars) | your_jwt_secret_key_here_min_32_chars |
-| ENCRYPTION_KEY | Clave AES (32 chars) | 12345678901234561234567890123456 |
-| ENCRYPTION_IV | Vector AES (16 chars) | 1234567890123456 |
-| PORT | Puerto del servidor | 3000 |
-| NODE_ENV | Entorno de ejecución | development |
+### Problemas Comunes
 
-## Scripts disponibles
+1. **Error: Cannot connect to database**
+   - Verificar PostgreSQL está corriendo
+   - Comprobar credenciales en `.env`
+   - Validar existencia de base de datos
+
+2. **Error: JWT token invalid**
+   - Verificar JWT_SECRET en `.env`
+   - Comprobar token no expirado
+   - Validar formato del token
+
+3. **Error: Encryption failed**
+   - Verificar longitud de ENCRYPTION_KEY (32 chars)
+   - Verificar longitud de ENCRYPTION_IV (16 chars)
+
+### Logs y Depuración
+
+```bash
+# Ver logs en desarrollo
+npm run dev
+
+# Ver logs en producción
+npm start | tee app.log
+```
+
+## Desarrollo
+
+### Scripts Disponibles
 
 | Comando | Descripción |
 |---------|-------------|
-| npm run dev | Inicia servidor en modo desarrollo |
-| npm run build | Compila TypeScript a JavaScript |
-| npm start | Inicia servidor en producción |
-| npm run prisma:generate | Genera cliente Prisma |
-| npm run prisma:migrate:create | Crea nueva migración |
-| npm run prisma:migrate:dev | Aplica migraciones en desarrollo |
-| npm run prisma:migrate:deploy | Aplica migraciones en producción |
-| npm run prisma:reset | Reinicia la base de datos |
-| npm run prisma:seed | Crea datos iniciales |
-| npm run prisma:studio | Abre interfaz de Prisma |
+| `npm run dev` | Desarrollo con hot-reload |
+| `npm run build` | Compilar para producción |
+| `npm start` | Iniciar en producción |
+| `npm test` | Ejecutar pruebas |
+| `npm run lint` | Verificar código |
+
+### Base de Datos
+
+| Comando | Descripción |
+|---------|-------------|
+| `npm run prisma:generate` | Generar cliente |
+| `npm run prisma:migrate:dev` | Migrar en desarrollo |
+| `npm run prisma:studio` | UI de administración |
+
+## Contribución
+
+1. Fork el repositorio
+2. Crear rama feature (`git checkout -b feature/AmazingFeature`)
+3. Commit cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abrir Pull Request
