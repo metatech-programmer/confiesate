@@ -27,7 +27,9 @@ CREATE TABLE "users" (
 CREATE TABLE "publications" (
     "id" SERIAL NOT NULL,
     "uuid" TEXT NOT NULL,
+    "title" TEXT,
     "content" TEXT NOT NULL,
+    "image_url" TEXT,
     "status" "PublicationStatus" NOT NULL DEFAULT 'active',
     "user_uuid" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

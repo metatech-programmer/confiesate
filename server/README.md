@@ -23,6 +23,9 @@ API RESTful para el sistema de confesiones anónimas de la Universidad Santo Tom
   - [Desarrollo](#desarrollo)
     - [Scripts Disponibles](#scripts-disponibles)
     - [Base de Datos](#base-de-datos)
+      - [Triggers de PostgreSQL](#triggers-de-postgresql)
+      - [Estructura de la Base de Datos](#estructura-de-la-base-de-datos)
+      - [Migraciones](#migraciones)
   - [Contribución](#contribución)
 
 ## Características
@@ -45,8 +48,8 @@ API RESTful para el sistema de confesiones anónimas de la Universidad Santo Tom
 
 1. **Clonar el Repositorio**
 ```bash
-git clone https://github.com/tu-usuario/confesiones-usta.git
-cd confesiones-usta/server
+git clone https://github.com/tu-usuario/confiesate.git
+cd confiesate/server
 ```
 
 2. **Instalar Dependencias**
@@ -205,9 +208,59 @@ npm start | tee app.log
 
 | Comando | Descripción |
 |---------|-------------|
-| `npm run prisma:generate` | Generar cliente |
-| `npm run prisma:migrate:dev` | Migrar en desarrollo |
-| `npm run prisma:studio` | UI de administración |
+| `npm run prisma:generate` | Generar cliente de Prisma |
+| `npm run prisma:migrate:dev` | Ejecutar migraciones y triggers en desarrollo |
+| `npm run prisma:migrate:deploy` | Ejecutar migraciones y triggers en producción |
+| `npm run prisma:studio` | Abrir UI de administración de Prisma |
+| `npm run prisma:reset` | Resetear base de datos (¡Cuidado!) |
+| `npm run prisma:seed` | Poblar datos iniciales |
+
+#### Triggers de PostgreSQL
+
+El sistema incluye triggers automáticos que:
+
+1. **Reportes Automáticos** (`publication_report_trigger`)
+   - Se activa cuando una publicación recibe 20 reportes
+   - Cambia automáticamente el estado a 'flagged'
+   - Ayuda a moderar contenido inapropiado
+
+2. **Nombres Anónimos** (`new_anonymous_user_trigger`)
+   - Se activa al crear usuarios sin nombre
+   - Genera nombres secuenciales (ej: "Anónimo 1", "Anónimo 2")
+   - Mantiene el anonimato de forma ordenada
+
+#### Estructura de la Base de Datos
+
+```prisma
+model User {
+  // Campos principales
+  uuid       String     @unique @default(uuid())
+  name       String
+  email      String     @unique
+  // ...otros campos
+}
+
+model Publication {
+  // Campos principales
+  uuid        String    @unique @default(uuid())
+  content     String
+  status      PublicationStatus
+  // ...otros campos
+}
+```
+
+#### Migraciones
+
+Las migraciones incluyen:
+- Esquema base de datos
+- Triggers PostgreSQL
+- Índices para optimización
+- Restricciones de integridad
+
+Para aplicar todo:
+```bash
+npm run prisma:migrate:dev
+```
 
 ## Contribución
 

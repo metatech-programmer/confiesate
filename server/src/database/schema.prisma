@@ -24,6 +24,9 @@ enum UserRole {
   admin
 }
 
+/// Triggers SQL:
+/// - publication_report_trigger: Marca publicaciones como 'flagged' después de 20 reportes
+/// - new_anonymous_user_trigger: Genera nombres anónimos automáticamente
 model User {
   id         Int        @id @default(autoincrement())
   uuid       String     @unique @default(uuid())
