@@ -1,6 +1,7 @@
-const { PrismaClient } = require('@prisma/client');
-const ExcelJS = require('exceljs');
-const { decrypt } = require('../utils/encryption');
+import { PrismaClient } from '@prisma/client';
+import ExcelJS from 'exceljs';
+import { decrypt } from '../utils/encryption';
+
 const prisma = new PrismaClient();
 
 /**
@@ -30,10 +31,10 @@ const exportPublicationsToExcel = async () => {
 
   // Creamos un nuevo libro de Excel
   const workbook = new ExcelJS.Workbook();
-  
+
   // Agregamos una hoja para publicaciones
   const publicationsSheet = workbook.addWorksheet('Publicaciones');
-  
+
   // Definimos las columnas
   publicationsSheet.columns = [
     { header: 'UUID', key: 'uuid', width: 36 },
@@ -62,7 +63,7 @@ const exportPublicationsToExcel = async () => {
 
   // Agregamos una hoja para usuarios
   const usersSheet = workbook.addWorksheet('Usuarios');
-  
+
   // Definimos las columnas de usuarios
   usersSheet.columns = [
     { header: 'UUID', key: 'uuid', width: 36 },
@@ -74,7 +75,7 @@ const exportPublicationsToExcel = async () => {
 
   // Obtenemos todos los usuarios
   const users = await prisma.user.findMany();
-  
+
   // Agregamos datos a la hoja de usuarios
   for (const user of users) {
     usersSheet.addRow({

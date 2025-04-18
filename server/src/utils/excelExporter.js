@@ -1,6 +1,5 @@
-// src/utils/excelExporter.js
-const ExcelJS = require('exceljs');
-const { decrypt } = require('./encryption');
+import ExcelJS from 'exceljs';
+import { decrypt } from './encryption';
 
 /**
  * Crea un archivo Excel con los datos de publicaciones

@@ -1,4 +1,3 @@
-// src/database/seed.js
 import { PrismaClient } from '@prisma/client';
 import { encrypt } from '../utils/encryption.js';
 

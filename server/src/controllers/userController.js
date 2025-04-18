@@ -1,7 +1,6 @@
-// src/controllers/userController.js
-const userService = require('../services/userService');
-const publicationService = require('../services/publicationService');
-const { ApiError } = require('../utils/errorHandler');
+import userService from '../services/userService'
+import publicationService from '../services/publicationService'
+import { ApiError } from '../utils/errorHandler'
 
 /**
  * Obtiene un usuario por su UUID

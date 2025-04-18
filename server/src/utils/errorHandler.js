@@ -1,4 +1,3 @@
-// src/utils/errorHandler.js
 
 /**
  * Clase para manejar errores de la API

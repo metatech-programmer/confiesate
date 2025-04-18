@@ -1,4 +1,3 @@
-// src/routes/userRoutes.js
 import express from 'express';
 import * as userController from '../controllers/userController.js';
 import { validateUuidParam, validatePagination } from '../middlewares/validationMiddleware.js';

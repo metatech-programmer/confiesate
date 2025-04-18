@@ -1,8 +1,7 @@
-// src/routes/exportRoutes.js
-const express = require('express');
+import express from 'express'
+import publicationController from '../controllers/publicationController'
+import { protectRoute } from '../middlewares/authMiddleware'
 const router = express.Router();
-const publicationController = require('../controllers/publicationController');
-const { protectRoute } = require('../middlewares/authMiddleware');
 
 // Todas las rutas de exportación requieren autenticación
 router.use(protectRoute);

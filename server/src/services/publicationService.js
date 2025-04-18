@@ -1,4 +1,3 @@
-// src/services/publicationService.js
 import { PrismaClient } from '@prisma/client';
 import { encrypt, decrypt } from '../utils/encryption.js';
 import * as userService from './userService.js';

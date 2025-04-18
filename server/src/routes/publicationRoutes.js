@@ -1,9 +1,7 @@
-// src/routes/publicationRoutes.js
-const express = require('express');
+import express from 'express'
+import publicationController from '../controllers/publicationController'
+import { validatePublication, validateUuidParam, validatePagination } from '../middlewares/validationMiddleware'
 const router = express.Router();
-const publicationController = require('../controllers/publicationController');
-const { validatePublication, validateUuidParam, validatePagination } = require('../middlewares/validationMiddleware');
-const { protectRoute } = require('../middlewares/authMiddleware');
 
 // Rutas públicas
 router.get('/', validatePagination, publicationController.getAllPublications);

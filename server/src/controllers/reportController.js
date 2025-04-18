@@ -1,7 +1,6 @@
-// src/controllers/reportController.js
-const reportService = require('../services/reportService');
-const publicationService = require('../services/publicationService');
-const { ApiError } = require('../utils/errorHandler');
+import reportService from '../services/reportService'
+import publicationService from '../services/publicationService'
+import { ApiError } from '../utils/errorHandler'
 
 /**
  * Obtiene todos los reportes con paginación

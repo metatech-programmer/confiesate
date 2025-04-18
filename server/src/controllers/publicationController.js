@@ -1,4 +1,3 @@
-// src/controllers/publicationController.js
 import * as publicationService from '../services/publicationService.js';
 import * as userService from '../services/userService.js';
 import * as reportService from '../services/reportService.js';

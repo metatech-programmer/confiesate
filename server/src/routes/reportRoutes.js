@@ -1,9 +1,9 @@
-// src/routes/reportRoutes.js
-const express = require('express');
+import express from 'express';
+import reportController from '../controllers/reportController'
+import { validatePagination } from '../middlewares/validationMiddleware'
+import { protectRoute } from '../middlewares/authMiddleware'
 const router = express.Router();
-const reportController = require('../controllers/reportController');
-const { validatePagination } = require('../middlewares/validationMiddleware');
-const { protectRoute } = require('../middlewares/authMiddleware');
+
 
 // Todas las rutas de reportes requieren autenticación
 router.use(protectRoute);

@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken'
 
 /**
  * Middleware para proteger rutas que requieren autenticación
