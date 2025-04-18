@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserStatus {
+  active
+  banned
+  deleted
+}
+
+enum PublicationStatus {
+  active
+  flagged
+  deleted
+}
+
+model User {
+  id         Int         @id @default(autoincrement())
+  uuid       String      @unique @default(uuid())
+  name       String
+  status     UserStatus  @default(active)
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+
+  publications Publication[]
+  reports      Report[]      @relation("ReporterRelation")
+
+  @@map("users")
+}
+
+model Publication {
+  id         Int               @id @default(autoincrement())
+  uuid       String            @unique @default(uuid())
+  content    String
+  status     PublicationStatus @default(active)
+  user_uuid  String
+  created_at DateTime          @default(now())
+  updated_at DateTime          @updatedAt
+
+  user    User     @relation(fields: [user_uuid], references: [uuid])
+  reports Report[]
+
+  @@index([user_uuid])
+  @@map("publications")
+}
+
+model Report {
+  id               Int      @id @default(autoincrement())
+  uuid             String   @unique @default(uuid())
+  publication_uuid String
+  reporter_uuid    String
+  created_at       DateTime @default(now())
+
+  publication Publication @relation(fields: [publication_uuid], references: [uuid])
+  reporter    User        @relation("ReporterRelation", fields: [reporter_uuid], references: [uuid])
+
+  @@unique([publication_uuid, reporter_uuid])
+  @@index([publication_uuid])
+  @@index([reporter_uuid])
+  @@map("reports")
+}
