@@ -60,6 +60,7 @@ npm install
 ## Configuración
 
 1. **Base de Datos**
+- Asegurarse que PostgreSQL está instalado y el comando `psql` está en el PATH del sistema
 - Crear una base de datos PostgreSQL:
 ```sql
 CREATE DATABASE anonymous_posts;
@@ -87,9 +88,23 @@ NODE_ENV=development
 ```
 
 3. **Inicializar Base de Datos**
+
+Ejecutar los siguientes comandos en orden:
+
 ```bash
+# Generar el cliente de Prisma
 npm run prisma:generate
+
+# Ejecutar migraciones
 npm run prisma:migrate:dev
+
+# Si el comando anterior falla al ejecutar psql, ejecutar manualmente:
+# 1. Copiar el contenido de prisma/migrations/triggers.sql
+# 2. Abrir psql o pgAdmin
+# 3. Conectar a la base de datos anonymous_posts
+# 4. Pegar y ejecutar el SQL
+
+# Poblar datos iniciales
 npm run prisma:seed
 ```
 
