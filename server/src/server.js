@@ -11,6 +11,7 @@ import publicationRoutes from './routes/publicationRoutes.js';
 import reportRoutes from './routes/reportRoutes.js';
 import exportRoutes from './routes/exportRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 // Import error handler
 import { errorMiddleware } from './utils/errorHandler.js';
@@ -35,6 +36,7 @@ app.use('/api/publications', publicationRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/export', exportRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/auth', authRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import ExcelJS from 'exceljs';
-import { decrypt } from '../utils/encryption';
+import { decrypt } from '../utils/encryption.js';
 
 const prisma = new PrismaClient();
 
@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
  * Exporta todas las publicaciones a un archivo Excel
  * @returns {Promise<Buffer>} - Buffer con el archivo Excel
  */
-const exportPublicationsToExcel = async () => {
+export const exportPublicationsToExcel = async () => {
   // Obtenemos todas las publicaciones con sus usuarios y reportes
   const publications = await prisma.publication.findMany({
     include: {
@@ -95,7 +95,7 @@ const exportPublicationsToExcel = async () => {
  * Exporta todos los datos en formato JSON
  * @returns {Promise<Object>} - Objeto con todos los datos
  */
-const exportDataToJson = async () => {
+export const exportDataToJson = async () => {
   const [users, publications, reports] = await Promise.all([
     prisma.user.findMany(),
     prisma.publication.findMany(),
@@ -114,5 +114,3 @@ const exportDataToJson = async () => {
     reports
   };
 };
-
-module.exports = { exportPublicationsToExcel, exportDataToJson };

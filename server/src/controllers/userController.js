@@ -1,11 +1,11 @@
-import userService from '../services/userService'
-import publicationService from '../services/publicationService'
-import { ApiError } from '../utils/errorHandler'
+import * as userService from '../services/userService.js';
+import * as publicationService from '../services/publicationService.js';
+import { ApiError } from '../utils/errorHandler.js';
 
 /**
  * Obtiene un usuario por su UUID
  */
-exports.getUserByUuid = async (req, res, next) => {
+export const getUserByUuid = async (req, res, next) => {
   try {
     const { uuid } = req.params;
     const user = await userService.getUserByUuid(uuid);
@@ -26,7 +26,7 @@ exports.getUserByUuid = async (req, res, next) => {
 /**
  * Obtiene todos los usuarios con paginación
  */
-exports.getAllUsers = async (req, res, next) => {
+export const getAllUsers = async (req, res, next) => {
   try {
     const { page = 1, limit = 10, status = 'active' } = req.query;
     
@@ -54,7 +54,7 @@ exports.getAllUsers = async (req, res, next) => {
 /**
  * Actualiza el estado de un usuario (banear o activar)
  */
-exports.updateUserStatus = async (req, res, next) => {
+export const updateUserStatus = async (req, res, next) => {
   try {
     const { uuid } = req.params;
     const { status } = req.body;
@@ -85,7 +85,7 @@ exports.updateUserStatus = async (req, res, next) => {
 /**
  * Elimina un usuario lógicamente (cambia status a deleted)
  */
-exports.deleteUser = async (req, res, next) => {
+export const deleteUser = async (req, res, next) => {
   try {
     const { uuid } = req.params;
     
@@ -110,7 +110,7 @@ exports.deleteUser = async (req, res, next) => {
 /**
  * Obtiene todas las publicaciones de un usuario
  */
-exports.getUserPublications = async (req, res, next) => {
+export const getUserPublications = async (req, res, next) => {
   try {
     const { uuid } = req.params;
     const { page = 1, limit = 10, status = 'active' } = req.query;

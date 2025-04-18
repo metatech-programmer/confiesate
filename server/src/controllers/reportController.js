@@ -1,11 +1,11 @@
-import reportService from '../services/reportService'
-import publicationService from '../services/publicationService'
-import { ApiError } from '../utils/errorHandler'
+import * as reportService from '../services/reportService.js';
+import * as publicationService from '../services/publicationService.js';
+import { ApiError } from '../utils/errorHandler.js';
 
 /**
  * Obtiene todos los reportes con paginación
  */
-exports.getAllReports = async (req, res, next) => {
+export const getAllReports = async (req, res, next) => {
   try {
     const { page = 1, limit = 10 } = req.query;
     
@@ -32,7 +32,7 @@ exports.getAllReports = async (req, res, next) => {
 /**
  * Obtiene todos los reportes de una publicación específica
  */
-exports.getReportsByPublication = async (req, res, next) => {
+export const getReportsByPublication = async (req, res, next) => {
   try {
     const { publicationUuid } = req.params;
     const { page = 1, limit = 10 } = req.query;
@@ -69,7 +69,7 @@ exports.getReportsByPublication = async (req, res, next) => {
 /**
  * Rechaza reportes y restaura la publicación a estado activo
  */
-exports.dismissReports = async (req, res, next) => {
+export const dismissReports = async (req, res, next) => {
   try {
     const { publicationUuid } = req.params;
     
@@ -87,9 +87,6 @@ exports.dismissReports = async (req, res, next) => {
     // Actualizamos el estado de la publicación a active
     await publicationService.updatePublicationStatus(publicationUuid, 'active');
     
-    // También podríamos eliminar los reportes asociados si es necesario
-    // await reportService.deleteReportsByPublication(publicationUuid);
-    
     res.status(200).json({
       success: true,
       message: 'Reportes rechazados y publicación restaurada correctamente'
@@ -102,7 +99,7 @@ exports.dismissReports = async (req, res, next) => {
 /**
  * Confirma reportes y elimina la publicación (cambia estado a deleted)
  */
-exports.confirmReports = async (req, res, next) => {
+export const confirmReports = async (req, res, next) => {
   try {
     const { publicationUuid } = req.params;
     

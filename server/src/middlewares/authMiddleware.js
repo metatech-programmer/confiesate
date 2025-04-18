@@ -1,4 +1,5 @@
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
+import { ApiError } from '../utils/errorHandler.js';
 
 /**
  * Middleware para proteger rutas que requieren autenticación
@@ -6,16 +7,13 @@ import jwt from 'jsonwebtoken'
  * @param {Object} res - Objeto de respuesta Express
  * @param {Function} next - Función para continuar al siguiente middleware
  */
-const protectRoute = (req, res, next) => {
+export const protectRoute = (req, res, next) => {
   try {
     // Obtener el token del header
     const authHeader = req.headers.authorization;
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({
-        status: 'error',
-        message: 'No autorizado, token no proporcionado'
-      });
+      throw new ApiError('No autorizado, token no proporcionado', 401);
     }
 
     const token = authHeader.split(' ')[1];
@@ -28,13 +26,23 @@ const protectRoute = (req, res, next) => {
     
     next();
   } catch (error) {
-    return res.status(401).json({
-      status: 'error',
-      message: 'No autorizado, token inválido'
-    });
+    if (error.name === 'JsonWebTokenError') {
+      throw new ApiError('Token inválido', 401);
+    }
+    if (error.name === 'TokenExpiredError') {
+      throw new ApiError('Token expirado', 401);
+    }
+    next(error);
   }
 };
 
-module.exports = {
-  protectRoute
+/**
+ * Middleware para verificar rol de administrador
+ */
+export const isAdmin = (req, res, next) => {
+  if (req.user && req.user.role === 'admin') {
+    next();
+  } else {
+    throw new ApiError('Acceso no autorizado, se requieren privilegios de administrador', 403);
+  }
 };
