@@ -1,0 +1,5 @@
+# Comando para generar la migración inicial
+npx prisma migrate dev --name init --create-only
+
+# Luego se debe ejecutar para aplicar la migración
+npx prisma migrate dev
