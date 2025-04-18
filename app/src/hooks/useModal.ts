@@ -1,10 +1,10 @@
 import { useState, useCallback } from 'react';
 
-const useModal = (initialState = false) => {
+const useModal = <T>(initialState = false) => {
   const [isOpen, setIsOpen] = useState(initialState);
-  const [modalData, setModalData] = useState(null);
+  const [modalData, setModalData] = useState<T | null>(null);
 
-  const openModal = useCallback((data = null) => {
+  const openModal = useCallback((data: T | null = null) => {
     setModalData(data);
     setIsOpen(true);
     document.body.style.overflow = 'hidden';
@@ -16,17 +16,11 @@ const useModal = (initialState = false) => {
     document.body.style.overflow = 'auto';
   }, []);
 
-  const toggleModal = useCallback((data = null) => {
-    setIsOpen(prev => !prev);
-    setModalData(data);
-  }, []);
-
   return {
     isOpen,
     modalData,
     openModal,
-    closeModal,
-    toggleModal
+    closeModal
   };
 };
 

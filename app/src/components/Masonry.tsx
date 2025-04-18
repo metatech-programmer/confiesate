@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import VerPost from "./VerPost";
 import useModal from "../hooks/useModal";
-
-const Masonry = ({ items }) => {
-  const [likedItems, setLikedItems] = useState({});
-  const postModal = useModal();
+import { Item } from "../types/Item";
+const Masonry = ({ items }: { items: Item[] }) => {
+  const [likedItems, setLikedItems] = useState<Record<number, boolean>>({});
+  const postModal = useModal<number>();
 
   const sizeImage = [
     "851x315",
@@ -15,7 +15,7 @@ const Masonry = ({ items }) => {
     "600x600",
   ];
 
-  const handleClick = (itemId) => {
+  const handleClick = (itemId: number) => {
     setLikedItems((prev) => ({
       ...prev,
       [itemId]: !prev[itemId],
@@ -37,19 +37,21 @@ const Masonry = ({ items }) => {
             onDoubleClick={() => handleClick(item.id)}
           >
             <div className="relative">
-           
+
               <img
-                onClick={() => postModal.openModal(item.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  postModal.openModal(item.id);
+                }}
                 key={item.id}
                 className="rounded-t-xl shadow w-full h-auto object-contain bg-app-purple max-w-[100dvh] max-h-[70dvh] hover:opacity-70 transition-all"
                 src={
                   item.imageUrl
                     ? item.imageUrl
-                    : `https://dummyimage.com/${
-                        sizeImage[Math.floor(Math.random() * sizeImage.length)]
-                      }`
+                    : `https://dummyimage.com/${sizeImage[Math.floor(Math.random() * sizeImage.length)]
+                    }`
                 }
-                alt={item.alt}
+                alt={item.title}
               />
             </div>
             <div className="p-1 md:p-3 bg-app-bluePurple bg-opacity-70 rounded-b-lg md:rounded-b-xl flex font-open-sans justify-evenly items-center">
@@ -64,7 +66,7 @@ const Masonry = ({ items }) => {
                   <span className="truncate  md:w-full text-xs">{item.author}</span>
                 </div>
                 <div className="flex items-center justify-end space-x-1 md:space-x-2 w-1/3 ">
-                  <button className=" hover:scale-110 active:scale-110 transition-all" onClick={(e) => postModal.openModal(item.id)}>
+                  <button className=" hover:scale-110 active:scale-110 transition-all" onClick={() => postModal.openModal(item.id)}>
                     {" "}
                     <svg
                       className=" stroke-slate-400 fill-app-blue/70 hover:fill-app-blue "
@@ -77,7 +79,7 @@ const Masonry = ({ items }) => {
                     </svg>
                   </button>
                   <button
-                    onClick={(e) => handleClick(item.id)}
+                    onClick={() => handleClick(item.id)}
                     type="button"
                     className={
                       "md:hover:scale-110 active:scale-110  z-50  transition-all " +
@@ -89,7 +91,7 @@ const Masonry = ({ items }) => {
                   >
                     <svg
                       viewBox="0 0 1024.00 1024.00"
-                      class="w-6 h-6"
+                      className="w-6 h-6"
                       version="1.1"
                       xmlns="http://www.w3.org/2000/svg"
                       stroke-width="8.192"

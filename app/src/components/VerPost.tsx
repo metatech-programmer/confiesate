@@ -1,20 +1,30 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import Modal from "./Modal";
 import items from "../assets/constants/items.json";
+import { Item } from "../types/Item";
 
-const VerPost = ({ isOpen, onClose, postId }) => {
-  const [post, setPost] = useState(null);
+type VerPostProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  postId: number | null;
+};
+
+const VerPost = ({ isOpen, onClose, postId }: VerPostProps) => {
+  if (!isOpen || !postId) return null;
+
+
+  const [post, setPost] = useState<Item | null>(null);
   const [showMore, setShowMore] = useState(false);
 
   const toggleShowMore = () => {
     setShowMore(!showMore);
     const element = document.getElementById("descPost");
-    element.scrollTo(0, 0);
+    element?.scrollTo(0, 0);
   };
 
   const handleUpComments = () => {
     const element = document.getElementById("comments");
-    element.scrollTo({
+    element?.scrollTo({
       top: 0,
       behavior: "smooth",
     });
@@ -22,9 +32,9 @@ const VerPost = ({ isOpen, onClose, postId }) => {
 
   useEffect(() => {
     if (postId) {
-      const postFound = items.find((item) => item.id === postId);
+      const postFound = items.find((item) => Number(item.id) === postId);
       if (postFound) {
-        setPost(postFound);
+        setPost(postFound as Item);
       }
     }
   }, [postId]);
@@ -174,7 +184,7 @@ const VerPost = ({ isOpen, onClose, postId }) => {
               <div>
                 <form action="#" className="flex w-full justify-between gap-3 ">
                   <textarea
-                    type="text"
+                    itemType="text"
                     className="w-full p-1 border border-gray-300 rounded-md  bg-app-bluePurple/40"
                     placeholder="Agregar un comentario..."
                     required

@@ -1,7 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Modal from "./Modal";
 
-const CrearPost = ({ isOpen, onClose }) => {
+type props = {
+  isOpen: boolean;
+  onClose: () => void;
+};
+
+const CrearPost = ({ isOpen , onClose } : props) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -11,29 +16,34 @@ const CrearPost = ({ isOpen, onClose }) => {
     allowComments: false,
   });
 
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [showMoreOptions, setShowMoreOptions] = useState(false);
   const [allowComments, setAllowComments] = useState(false);
 
-  const handleSubmit = (e) => {
+
+/*   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log(formData);
     onClose();
-  };
+  }; */
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    const file = files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result);
+        if (typeof reader.result === 'string') {
+          setImagePreview(reader.result);
+        }
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = (e : React.ChangeEvent) => {
+    const { name, value } = e.target as HTMLInputElement;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -159,7 +169,7 @@ const CrearPost = ({ isOpen, onClose }) => {
                     placeholder="Agrega una descripción detallada"
                     value={formData.description}
                     onChange={handleChange}
-                    rows="4"
+                    rows={4}
                     className="w-full px-0 py-2 text-[16px] placeholder-[#6D6D6D] focus:outline-none resize-none border-none"
                   />
                 </div>

@@ -4,18 +4,19 @@ import Footer from "./components/Footer";
 import LandingTitle from "./components/LandingTitle";
 import Masonry from "./components/Masonry";
 import Menu from "./components/Menu";
-import items from "./assets/constants/items.json";
-import { use, useEffect, useState } from "react";
+import { Item } from "./types/Item";
+import itemsData from "./assets/constants/items.json";
+import { useEffect, useState } from "react";
 import Loading from "./components/Loading";
 
 function App() {
   const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const getTitle = (data) => {
-    if (String(data).includes("confesiones")) {
+  const getTitle = (data: string) => {
+    if (data.includes("confesiones")) {
       console.log("confesiones yei");
-    } else if (String(data).includes("ciudadanos")) {
+    } else if (data.includes("ciudadanos")) {
       console.log("ciudadanos yei");
     } else {
       console.log("todos yei");
@@ -34,6 +35,9 @@ function App() {
       setLoading(false);
     }, 2000);
   }, [title]);
+
+
+  const [items, setItems] = useState<Item[]>(itemsData );
 
   return (
     <div className="w-full bg-gradient-to-b from-transparent from-70%  to-app-bluePurple/50 pb-24 relative">
