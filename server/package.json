@@ -2,9 +2,9 @@
   "name": "confesiones-usta-server",
   "version": "1.0.0",
   "description": "Backend para la aplicación de confesiones USTA",
-  "main": "dist/server.js",
+  "main": "public/server.js",
   "scripts": {
-    "start": "node dist/server.js",
+    "start": "node public/server.js",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
     "lint": "eslint . --ext .ts",

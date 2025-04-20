@@ -19,6 +19,8 @@ pids
 node_modules
 jspm_packages
 
+
+public
 # Optional npm cache directory
 .npm
 
