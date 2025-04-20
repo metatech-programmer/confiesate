@@ -50,7 +50,7 @@ class Server {
   private routes(): void {
     const baseUrl = `/api/${appConfig.apiVersion}`;
     
-    this.app.get('/', (req, res) => {
+    this.app.get('/', (_req, res) => {
       res.send(`Welcome to the API, ${appConfig.apiVersion}!`);
     });
     this.app.use(`${baseUrl}/auth`, authRoutes);
