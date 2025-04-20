@@ -51,10 +51,8 @@ class Server {
     const baseUrl = `/api/${appConfig.apiVersion}`;
 
     this.app.get("/", (_req, res) => {
-
-
       res.status(200).json({
-        message: `API back-confessions is running`,
+        message: `API back-confessions is running ...`,
         version: appConfig.apiVersion,
       });
     });
