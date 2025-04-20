@@ -1,9 +1,10 @@
--- CreateTriggers
+-- Primero eliminamos los triggers y funciones si existen
 DROP TRIGGER IF EXISTS publication_report_trigger ON "reports";
 DROP FUNCTION IF EXISTS check_report_count();
 DROP TRIGGER IF EXISTS new_anonymous_user_trigger ON "users";
 DROP FUNCTION IF EXISTS generate_anonymous_name();
 
+-- Ahora creamos las funciones y triggers
 CREATE OR REPLACE FUNCTION check_report_count()
 RETURNS TRIGGER AS $$
 BEGIN
