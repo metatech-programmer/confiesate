@@ -1,21 +1,21 @@
-import express, { Application } from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
-import dotenv from 'dotenv';
-import { prisma } from './config/database';
-import securityConfig from './config/security';
-import appConfig from './config/app';
-import { errorMiddleware } from './utils/errorHandler';
+import express, { Application } from "express";
+import cors from "cors";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+import dotenv from "dotenv";
+import { prisma } from "./config/database";
+import securityConfig from "./config/security";
+import appConfig from "./config/app";
+import { errorMiddleware } from "./utils/errorHandler";
 
 // Routes
-import authRoutes from './routes/authRoutes';
-import userRoutes from './routes/userRoutes';
-import publicationRoutes from './routes/publicationRoutes';
-import commentRoutes from './routes/commentRoutes';
-import likeRoutes from './routes/likeRoutes';
-import reportRoutes from './routes/reportRoutes';
-import exportRoutes from './routes/exportRoutes';
+import authRoutes from "./routes/authRoutes";
+import userRoutes from "./routes/userRoutes";
+import publicationRoutes from "./routes/publicationRoutes";
+import commentRoutes from "./routes/commentRoutes";
+import likeRoutes from "./routes/likeRoutes";
+import reportRoutes from "./routes/reportRoutes";
+import exportRoutes from "./routes/exportRoutes";
 
 // Load environment variables
 dotenv.config();
@@ -37,7 +37,7 @@ class Server {
     // Basic middleware
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
-    
+
     // Security middleware
     this.app.use(cors(securityConfig.cors));
     this.app.use(helmet(securityConfig.helmet));
@@ -49,9 +49,14 @@ class Server {
    */
   private routes(): void {
     const baseUrl = `/api/${appConfig.apiVersion}`;
-    
-    this.app.get('/', (_req, res) => {
-      res.send(`Welcome to the API, ${appConfig.apiVersion}!`);
+
+    this.app.get("/", (_req, res) => {
+
+
+      res.status(200).json({
+        message: `API back-confessions is running`,
+        version: appConfig.apiVersion,
+      });
     });
     this.app.use(`${baseUrl}/auth`, authRoutes);
     this.app.use(`${baseUrl}/users`, userRoutes);
@@ -76,13 +81,15 @@ class Server {
     try {
       // Test database connection
       await prisma.$connect();
-      console.log('📦 Database connection established');
+      console.log("📦 Database connection established");
 
       this.app.listen(appConfig.port, () => {
-        console.log(`🚀 Server running on port ${appConfig.port} in ${appConfig.env} mode`);
+        console.log(
+          `🚀 Server running on port ${appConfig.port} in ${appConfig.env} mode`
+        );
       });
     } catch (error) {
-      console.error('❌ Error starting server:', error);
+      console.error("❌ Error starting server:", error);
       await prisma.$disconnect();
       process.exit(1);
     }
