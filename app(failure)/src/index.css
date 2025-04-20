@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "lacquer";
+  src: url("/src/assets/fonts/Lacquer/Lacquer-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "open-sans";
+  src: url("/src/assets/fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "open-sans", sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: .2rem;
+  height: .2rem;
+  background-color: #333;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #333;
+}
+
+::-webkit-scrollbar-track-piece {
+  background-color: #333;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #d9a667;
+}
+
+/* ------------------------------------------------- */
+
+.animate-show {
+  view-timeline-name: --reveal;
+
+  animation-name: show;
+  animation-fill-mode: both;
+
+  animation-timeline: --reveal;
+  animation-range: entry 15% cover 50%;
+}
+
+@keyframes show {
+  from {
+    opacity: 0;
+    scale: 80%;
+  }
+
+  to {
+    opacity: 1;
+    scale: 100%;
+    
+    
+  }
+
+}
