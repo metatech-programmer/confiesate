@@ -49,8 +49,8 @@ class Server {
    */
   private routes(): void {
     const baseUrl = `/api/${appConfig.apiVersion}`;
-    // Health check route
-    this.app.get("/", (_req, res) => {
+
+    this.app.get(baseUrl, (_req, res) => {
       res.status(200).json({
         message: `API back-confessions is running ...`,
         version: appConfig.apiVersion,
