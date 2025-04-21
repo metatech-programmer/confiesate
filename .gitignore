@@ -19,7 +19,7 @@ pids
 node_modules
 jspm_packages
 
-
+app.failure
 public
 # Optional npm cache directory
 .npm

@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserStatus {
+  active
+  banned
+  deleted
+}
+
+enum PublicationStatus {
+  active
+  flagged
+  deleted
+}
+
+enum UserRole {
+  user
+  admin
+}
+
+/// Triggers SQL:
+/// - publication_report_trigger: Marca publicaciones como 'flagged' después de 20 reportes
+/// - new_anonymous_user_trigger: Genera nombres anónimos automáticamente
+model User {
+  id         Int        @id @default(autoincrement())
+  uuid       String     @unique @default(uuid())
+  name       String
+  email      String     @unique
+  password   String
+  role       UserRole   @default(user)
+  status     UserStatus @default(active)
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  last_login DateTime?
+
+  publications Publication[]
+  reports      Report[]      @relation("ReporterRelation")
+  Like         Like[]
+  Comment      Comment[]
+
+  @@map("users")
+}
+
+model Publication {
+  id          Int               @id @default(autoincrement())
+  uuid        String            @unique @default(uuid())
+  title       String?           // Nuevo campo
+  content     String
+  image_url   String?           // Nuevo campo
+  status      PublicationStatus @default(active)
+  user_uuid   String
+  created_at  DateTime          @default(now())
+  updated_at  DateTime          @updatedAt
+
+  user     User       @relation(fields: [user_uuid], references: [uuid])
+  reports  Report[]
+  Like     Like[]
+  Comment  Comment[]
+
+  @@index([user_uuid])
+  @@map("publications")
+}
+
+model Report {
+  id               Int      @id @default(autoincrement())
+  uuid             String   @unique @default(uuid())
+  publication_uuid String
+  reporter_uuid    String
+  created_at       DateTime @default(now())
+
+  publication Publication @relation(fields: [publication_uuid], references: [uuid])
+  reporter    User        @relation("ReporterRelation", fields: [reporter_uuid], references: [uuid])
+
+  @@unique([publication_uuid, reporter_uuid])
+  @@index([publication_uuid])
+  @@index([reporter_uuid])
+  @@map("reports")
+}
+
+model Like {
+  id               Int      @id @default(autoincrement())
+  uuid             String   @unique @default(uuid())
+  publication_uuid String
+  user_uuid        String
+  created_at       DateTime @default(now())
+
+  publication Publication @relation(fields: [publication_uuid], references: [uuid])
+  user        User        @relation(fields: [user_uuid], references: [uuid])
+
+  @@unique([publication_uuid, user_uuid])
+  @@index([publication_uuid])
+  @@index([user_uuid])
+  @@map("likes")
+}
+
+model Comment {
+  id               Int      @id @default(autoincrement())
+  uuid             String   @unique @default(uuid())
+  publication_uuid String
+  user_uuid        String
+  comment_content  String
+  created_at       DateTime @default(now())
+
+  publication Publication @relation(fields: [publication_uuid], references: [uuid])
+  user        User        @relation(fields: [user_uuid], references: [uuid])
+
+  @@index([publication_uuid])
+  @@index([user_uuid])
+  @@map("comments")
+}
